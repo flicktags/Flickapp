@@ -65,12 +65,11 @@ router.delete('/delete/:id/:socialMediaId', async (req, res, next) => {
     }
   });
 
-  router.put('/update/:id/:socialMediaId', async (req, res, next) => {
-    const userId = req.params.email;
-  const socialMediaId = req.params.socialMediaId;
-
+router.put('/update/:id/:socialMediaId', async (req, res, next) => {
+  const userId = req.params.id;
+  const socialmediaId = req.params.socialMediaId;
   try {
-    // Find the user by email
+    // Find the user by id
     const user = await User.findOne({ id: userId });
 
     if (!user) {
@@ -78,7 +77,7 @@ router.delete('/delete/:id/:socialMediaId', async (req, res, next) => {
     }
 
     // Find the social media object by socialMediaId
-    const socialMedia = user.socialMedia.id(socialMediaId);
+    const socialMedia = user.socialMedia.id(socialmediaId);
 
     if (!socialMedia) {
       return res.status(404).json({ error: 'Social media account not found' });
