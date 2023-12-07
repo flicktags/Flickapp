@@ -33,24 +33,24 @@ const userSchema = new mongoose.Schema({
   },
   name: {
     type: String,
-    required: true
+    required: false
   },
   email: {
     type: String,
-    required: true,
+    required: false,
     unique: true
   },
   phone: {
-    type: String,
-    required: true
+    type: Number,
+    required: false
   },
   profession: {
     type: String,
-    required: true
+    required: false
   },
   organization: {
     type: String,
-    required: true
+    required: false
   },
   userImage: {
     type: String,
@@ -58,7 +58,7 @@ const userSchema = new mongoose.Schema({
   },
   isActive: {
     type: Boolean,
-    required: true
+    required: false
   },
   socialMedia: [socialMediaSchema]
 });
