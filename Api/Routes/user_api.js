@@ -129,6 +129,25 @@ router.put('/update/:id', async (req, res, next) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+// Middleware to parse JSON
+router.delete('/delete/:id', async (req, res, next) => {
+  const userId = req.params.id;
+
+  try {
+    // Find and delete the user by id
+    const deletedUser = await User.findOneAndDelete({ id: userId });
+
+    if (!deletedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    return res.json({ data: deletedUser });
+  } catch (error) {
+    console.error('Error deleting user and social media accounts:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 
 module.exports = router;
