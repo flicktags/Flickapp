@@ -24,11 +24,17 @@ const socialMediaSchema = new mongoose.Schema({
     required: false
   }
 });
-
+const imgSchema = new mongoose.Schema({
+  name: String,
+  img: {
+    data: Buffer,
+    contentType: String,
+  },
+});
 const userSchema = new mongoose.Schema({
   id:{
   type:String,
-  required:true,
+  required:false,
   unique:true
   },
   name: {
@@ -42,7 +48,7 @@ const userSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
-    required: false
+    required: false 
   },
   profession: {
     type: String,
@@ -52,7 +58,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false
   },
-  userImage: {
+  isLost: {
+    type: Boolean,
+    required: false
+  },
+  lostMassege: {
     type: String,
     required: false
   },
@@ -60,9 +70,13 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     required: false
   },
+ 
+  imageData: imgSchema,
   socialMedia: [socialMediaSchema]
 });
+
 
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
+ 
