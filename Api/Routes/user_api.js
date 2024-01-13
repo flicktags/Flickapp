@@ -90,7 +90,7 @@ router.put('/update/:id', async (req, res, next) => {
       user.name = req.body.name;
     }
 
-    if (req.body.hasOwnProperty('email')) {
+    if (req.body.hasOwnProperty('email')) { 
       user.email = req.body.email;
     }
 
@@ -113,7 +113,12 @@ router.put('/update/:id', async (req, res, next) => {
     if (req.body.hasOwnProperty('isActive')) {
       user.isActive = req.body.isActive;
     }
-
+    if (req.body.hasOwnProperty('isLost')) {
+      user.isLost = req.body.isLost;
+    }
+    if (req.body.hasOwnProperty('lostMassege')) {
+      user.lostMassege = req.body.lostMassege;
+    }
     // Save the updated user
     const updatedUser = await user.save();
 
