@@ -113,7 +113,29 @@ router.put('/update/:id/:socialMediaId', async (req, res, next) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+router.put('/updateDirectMode/:UserId', async (req, res) => {
+  try {
+    const userId = req.params.UserId;
+    const {  socialMediaId, directMode } = req.body;
+    console.log(userId, socialMediaId);
+    // Convert directMode to boolean
+    const directModeValue = directMode === 'true';
 
+    // Update directMode for the specified user
+    await User.updateOne({ id: userId }, { $set: { directMode: directModeValue } });
+
+    // Update directMode for the specified social media account
+    await User.updateOne(
+      { id: userId, 'socialMedia._id': socialMediaId },
+      { $set: { 'socialMedia.$.directMode': directModeValue } }
+    );
+
+    res.json({ success: true, message: 'Direct mode updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+});
   
 
 module.exports = router;
