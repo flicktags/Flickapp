@@ -33,7 +33,7 @@ router.put('/uploadFlickData', async (req, res) => {
     res.json({ success: true, message: 'Flick data uploaded successfully' });
   });
 
-  router.post('/verifyFlickCode', async (req, res) => {
+   router.post('/verifyFlickCode', async (req, res) => {
     const { flickCode, flickNumber } = req.body;
   
     if (!flickCode || !flickNumber) {
