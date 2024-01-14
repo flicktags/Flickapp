@@ -1,6 +1,5 @@
 
-
-const FlickSeries = require('../Routes/Model/flickCodes'); 
+const FlickSeries = require('../Routes/Model/flickCodes'); // Adjust the path based on your project structure
 const router = require("express").Router();
 router.get('/',(req, res) => {
 return res.status(404).json({error:"the api is not available  for"});
@@ -24,7 +23,7 @@ router.put('/uploadFlickData', async (req, res) => {
       flickDataArray.forEach((flickData) => {
         errors.push({ flickData, error: 'Internal Server Error', details: error.message });
       });
-    }
+    } 
   
     if (errors.length > 0) {
       return res.status(400).json({ errors });
@@ -33,7 +32,7 @@ router.put('/uploadFlickData', async (req, res) => {
     res.json({ success: true, message: 'Flick data uploaded successfully' });
   });
 
-   router.post('/verifyFlickCode', async (req, res) => {
+  router.post('/verifyFlickCode', async (req, res) => {
     const { flickCode, flickNumber } = req.body;
   
     if (!flickCode || !flickNumber) {
