@@ -29,6 +29,8 @@ router.get('/:id', async (req, res, next) => {
         organization: user.organization,
         userImage: user.userImage,
         isActive: user.isActive,
+        isLost:user.isLost,
+        lostMassege:user.lostMassege,
         socialMedia: user.socialMedia || []
       }
     });
@@ -53,6 +55,8 @@ router.put('/', async (req, res, next) => {
       organization: req.body.organization,
       userImage: req.body.userImage,
       isActive: req.body.isActive,
+      isLost:req.bodyisLost,
+      lostMassege:req.body.lostMassege,
       socialMedia: req.body.socialMedia || []
     });
 
@@ -73,6 +77,7 @@ router.put('/', async (req, res, next) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 // Update user data by email
 router.put('/update/:id', async (req, res, next) => {
   const userId = req.params.id;
@@ -156,4 +161,3 @@ router.delete('/delete/:id', async (req, res, next) => {
 
 
 module.exports = router;
-

@@ -22,6 +22,10 @@ const socialMediaSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     required: false
+  },
+  directMode: {
+    type: Boolean,
+    required: false
   }
 });
 const imgSchema = new mongoose.Schema({
@@ -70,7 +74,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     required: false
   },
- 
+  directMode: {
+    type: Boolean,
+    required: false
+  },
   imageData: imgSchema,
   socialMedia: [socialMediaSchema]
 });

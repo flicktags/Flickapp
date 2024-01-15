@@ -65,7 +65,7 @@ router.delete('/delete/:id/:socialMediaId', async (req, res, next) => {
     }
   });
 
-router.put('/update/:id/:socialMediaId', async (req, res, next) => {
+  router.put('/update/:id/:socialMediaId', async (req, res, next) => {
   const userId = req.params.id;
   const socialmediaId = req.params.socialMediaId;
   try {
@@ -113,6 +113,7 @@ router.put('/update/:id/:socialMediaId', async (req, res, next) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+//update DirectMode of user account
 router.put('/updateDirectMode/:UserId', async (req, res) => {
   try {
     const userId = req.params.UserId;
@@ -136,6 +137,6 @@ router.put('/updateDirectMode/:UserId', async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
-  
 
+  
 module.exports = router;

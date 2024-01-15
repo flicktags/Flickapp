@@ -33,17 +33,26 @@ router.put('/uploadFlickData', async (req, res) => {
   });
 
   router.post('/verifyFlickCode', async (req, res) => {
-    const { flickCode, flickNumber } = req.body;
+    const { flickNumber } = req.body;
   
-    if (!flickCode || !flickNumber) {
-      return res.status(400).json({ error: 'Flick code and flick number are required in the request body' });
+    if (!flickNumber) {
+      return res.status(400).json({ error: 'Flick number is required in the request body' });
     }
   
     try {
-      const existingFlick = await FlickSeries.findOne({ flickCode, flickNumber });
+      // Find the flick record
+      const flickRecord = await FlickSeries.findOne({ flickNumber });
   
-      if (existingFlick) {
-        return res.json({ exists: true, message: 'Flick data exists in the database' });
+      if (flickRecord) {
+        // Check the number of attempts
+        if (flickRecord.attemptCount < 3) {
+          // Increment the attempt count in the database
+          await FlickSeries.findByIdAndUpdate(flickRecord._id, { $inc: { attemptCount: 1 } });
+  
+          return res.json({ exists: true, message: 'Flick Code Exists' });
+        } else {
+          return res.json({ expired: true, message: 'Flick Code Is Expired' });
+        }
       } else {
         return res.json({ exists: false, message: 'Flick data does not exist in the database' });
       }
