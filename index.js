@@ -10,7 +10,7 @@ const userImage = require('./Api/Routes/index');
 const flickCode=require('./Api/Routes/flickCodes')
 const bodyparser=require('body-parser');
 app.use(bodyparser.urlencoded({extended:false}));
-app.use(bodyparser.json());
+app.use(bodyparser.json()); 
 app.use('/user', user); 
 app.use('/socialmedia', social_media);
 app.use('/UserImg', userImage);
