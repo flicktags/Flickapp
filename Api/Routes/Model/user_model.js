@@ -78,7 +78,13 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     required: false
   },
-  imageData: imgSchema,
+  imageData: {
+    name: String,
+    img: {
+      data: Buffer,
+      contentType: String,
+    },
+  },
   socialMedia: [socialMediaSchema]
 });
 

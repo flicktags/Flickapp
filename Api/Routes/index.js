@@ -18,28 +18,24 @@ const storage = multer.diskStorage({
     cb(null, file.originalname);
   },
 });
-const upload = multer({ storage: storage });
-router.post("/", upload.single("testImage"), (req, res) => {
-  const saveImage =  imageModel({
-    name: req.body.name,
-    img: {
-      data: fs.readFileSync("./public/temp/" + req.file.filename),
-      contentType: "image/png",
-    },
-  });
-  saveImage  
-    .save()
-    .then((res) => {
-      console.log("image is saved");
-    })
-    .catch((err) => {
-      console.log(err, "error has occur");
-    });
-    res.send('image is saved')
+
+const fileFilter = (req, file, cb) => {
+  // Accept only PNG and JPG files
+  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+    cb(null, true);
+  } else {
+    cb(new Error("Only JPEG and PNG files are allowed"), false);
+  }
+};
+ 
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 3 * 1024 * 1024, // Limit file size to 3MB
+  },
+  fileFilter: fileFilter,
 });
-
-
-router.put("/:id", upload.single("testImage"), async (req, res) => {
+router.put("/uploadUserImg/:id", upload.single("testImage"), async (req, res) => {
   try {
     // Find the user by the provided id
     const userId = req.params.id;
@@ -49,33 +45,55 @@ router.put("/:id", upload.single("testImage"), async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     } 
-    console.log("User found:", user);
+    console.log("req.file:", req.file);
+
     // Save the image data associated with the user
-    const saveImage = user.imageData({
-     // Save the user id associated with the image
+    const saveImage = {
       name: req.body.name,
-      img: { 
+      img: {
         data: fs.readFileSync("./public/temp/" + req.file.filename),
         contentType: "image/png",
       },
-    });
-
-    await saveImage.save();
-    user.imageData = saveImage._id;  // Assuming 'imageData' is the field in the user schema for the image reference
+    };
+     
+    // Update the user's imageData field with the saved image data
+    user.imageData = saveImage;
+    
     await user.save();
     console.log("Image is saved"); 
     res.send("Image is saved");
-  } catch (err) {
+  } catch (err) { 
     console.error("Error saving image:", err);
     res.status(500).send("Error saving image");
   }
 });
+router.get("/fetchUserImg/:id", async (req, res) => {
+  try {
+    const userId = req.params.id;
+ 
+    // Find the user by the provided id
+    const user = await User.findOne({ id: userId });
 
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
-
-router.get('/',async (req,res)=>{
-  const allData = await imageModel.find()
-  res.json(allData)
-})
+    // Respond with user information including image data
+    res.json({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      // ... other user properties
+      imageData: {
+        name: user.imageData.name,
+        contentType: user.imageData.img.contentType,
+        data: user.imageData.img.data.toString("base64"), // Convert binary data to base64
+      },
+    });
+  } catch (err) {
+    console.error("Error fetching user:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 module.exports = router;
