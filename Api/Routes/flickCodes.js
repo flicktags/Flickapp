@@ -15,7 +15,7 @@ router.put('/uploadFlickData', async (req, res) => {
   
     const errors = [];
   
-    try {
+    try { 
       // Use Mongoose's create function to handle bulk insert
       await FlickSeries.create(flickDataArray);
     } catch (error) {
