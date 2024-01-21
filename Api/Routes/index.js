@@ -12,7 +12,7 @@ router.use(bodyParser.json());
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, (process.cwd()+"/public/temp"));
+    cb(null, "./Api/Routes/uploads");
   },
   filename: (req, file, cb) => {
     cb(null, file.originalname); 
