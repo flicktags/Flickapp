@@ -19,7 +19,7 @@ app.use('/user', user);
 app.use('/socialmedia', social_media);
 app.use('/UserImg', userImage);
 app.use('/flickCode',flickCode);
-app.use(express.static('public'));
+app.use(express.static('public')); 
 
 app.post("/UserImg/uploadImage/:id", async (req, res) => {
   await handleImageUpload(req, res);
