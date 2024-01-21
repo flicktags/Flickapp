@@ -3,12 +3,9 @@ const express = require('express');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const app = express();
 const cors=require('cors');
-const corsOptions ={
-    origin:'http://localhost:3000', 
-    credentials:true,            //access-control-allow-credentials:true
-    optionSuccessStatus:200
-}
-app.use(cors(corsOptions));
+app.use(cors({
+  'Access-Control-Allow-Origin': '*',
+}));
 const port = 3000;
 
 const { runMiddleware, handleImageUpload } = require("./Api/Routes/imageupload");
