@@ -4,6 +4,9 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 const app = express();
 const cors=require('cors');
 const port = 3000;
+app.use(cors({
+  'Access-Control-Allow-Origin': '*',
+}));
 const { runMiddleware, handleImageUpload } = require("./Api/Routes/imageupload");
 const user=require('./Api/Routes/user_api')
 const social_media=require('./Api/Routes/social_media')
@@ -17,9 +20,7 @@ app.use('/socialmedia', social_media);
 app.use('/UserImg', userImage);
 app.use('/flickCode',flickCode);
 app.use(express.static('public'));
-app.use(cors({
-  'Access-Control-Allow-Origin': '*',
-}));
+
 app.post("/UserImg/uploadImage/:id", async (req, res) => {
   await handleImageUpload(req, res);
 });
