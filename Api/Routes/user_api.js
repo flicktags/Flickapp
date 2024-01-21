@@ -78,7 +78,7 @@ router.put('/', async (req, res, next) => {
   }
 });
 
-// Update user data by email
+// Update user data by user firebase id
 router.put('/update/:id', async (req, res, next) => {
   const userId = req.params.id;
 
