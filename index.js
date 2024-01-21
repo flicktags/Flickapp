@@ -5,7 +5,7 @@ const app = express();
 const cors=require('cors');
 const port = 3000;
 app.use(cors({
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': 'http://localhost:3000',
 }));
 const { runMiddleware, handleImageUpload } = require("./Api/Routes/imageupload");
 const user=require('./Api/Routes/user_api')
