@@ -4,20 +4,23 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 const app = express();
 const cors=require('cors');
 const port = 3000;
+const { runMiddleware, handleImageUpload } = require("./Api/Routes/imageupload");
 const user=require('./Api/Routes/user_api')
 const social_media=require('./Api/Routes/social_media')
 const userImage = require('./Api/Routes/index');
 const flickCode=require('./Api/Routes/flickCodes')
 const bodyparser=require('body-parser');
 app.use(bodyparser.urlencoded({extended:false}));
-app.use(bodyparser.json()); 
+app.use(bodyparser.json());
 app.use('/user', user); 
 app.use('/socialmedia', social_media);
 app.use('/UserImg', userImage);
 app.use('/flickCode',flickCode);
 app.use(express.static('public'));
-app.use(cors()); 
-
+app.use(cors());
+app.post("/UserImg/uploadImage/:id", async (req, res) => {
+  await handleImageUpload(req, res);
+});
  app.use((req, res, next) => { 
   res.status(404).json({
     error: 'Bad Request'
