@@ -23,7 +23,7 @@ const socialMediaSchema = new mongoose.Schema({
     type: Boolean,
     required: false
   },
-  userDirectMode: {
+  socialMediaDirectMode: {
     type: Boolean,
     required: false
   }
@@ -74,7 +74,7 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     required: false
   },
-  directMode: {
+ userDirectMode: {
     type: Boolean,
     required: false
   },
