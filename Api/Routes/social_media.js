@@ -128,7 +128,7 @@ router.put('/updateDirectMode/:UserId', async (req, res) => {
     // Update directMode for the specified social media account
     await User.updateOne(
       { id: userId, 'socialMedia._id': socialMediaId },
-      { $set: { 'socialMedia.$.directMode': directModeValue } }
+      { $set: { 'socialMedia.$.socialMediaDirectMode': directModeValue } }
     );
 
     res.json({ success: true, message: 'Direct mode updated successfully' });
