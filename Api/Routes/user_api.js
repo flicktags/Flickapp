@@ -31,7 +31,7 @@ router.get('/:id', async (req, res, next) => {
         isActive: user.isActive,
         isLost:user.isLost,
         lostMassege:user.lostMassege,
-        directMode:user.userDirectMode,
+        userDirectMode:user.userDirectMode,
         socialMedia: user.socialMedia || []
       }
     });
