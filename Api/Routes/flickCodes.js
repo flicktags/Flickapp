@@ -45,7 +45,7 @@ router.put('/uploadFlickData', async (req, res) => {
   
       if (flickRecord) {
         // Check the number of attempts
-        if (flickRecord.attemptCount < 3) {
+        if (flickRecord.attemptCount < 25) {
           // Increment the attempt count in the database
           await FlickSeries.findByIdAndUpdate(flickRecord._id, { $inc: { attemptCount: 1 } });
   
