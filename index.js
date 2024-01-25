@@ -27,7 +27,7 @@ app.post("/UserImg/uploadImage/:id", async (req, res) => {
   res.status(404).json({
     error: 'Bad Request'
   });
-});
+});   
  
 const uri = "mongodb+srv://mfahimch:78678PPIred@cluster0.eviduti.mongodb.net/?retryWrites=true&w=majority";
 async function run() {
