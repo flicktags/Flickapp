@@ -138,6 +138,15 @@ router.delete('/delete/:id/:socialMediaId', async (req, res, next) => {
 //     res.status(500).json({ success: false, message: 'Internal server error' });
 //   }
 // });
+router.put('/updateDirectMode/:UserId', async (req, res) => {
+  try {
+    const userId = req.params.UserId;
+    const { socialMediaId, directMode } = req.body;
+
+    // Convert directMode to boolean
+    const directModeValue = typeof directMode === 'string' ? directMode === 'true' : directMode;
+
+    // Update userDirectMode
     await User.updateOne({ id: userId }, { $set: { userDirectMode: directModeValue } });
 
     // Update social media accounts
