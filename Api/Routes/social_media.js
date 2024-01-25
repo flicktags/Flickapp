@@ -114,23 +114,55 @@ router.delete('/delete/:id/:socialMediaId', async (req, res, next) => {
   }
 });
 //update DirectMode of user account
+// router.put('/updateDirectMode/:UserId', async (req, res) => {
+//   try {
+//     const userId = req.params.UserId;
+//     const { socialMediaId, directMode } = req.body;
+//     console.log('userId:', userId);
+//     console.log('socialMediaId:', socialMediaId);
+    
+//     // Convert directMode to boolean (only if needed)
+//     const directModeValue = typeof directMode === 'string' ? directMode === 'true' : directMode;
+
+//     console.log('directModeValue:', directModeValue);
+
+//     await User.updateOne({ id: userId }, { $set: { userDirectMode: directModeValue } });
+//     await User.updateOne(
+//       { id: userId, 'socialMedia._id': socialMediaId },
+//       { $set: { 'socialMedia.$.socialMediaDirectMode': directModeValue } }
+//     );
+
+//     res.json({ success: true, message: 'Direct mode updated successfully' });
+//   } catch (error) {
+//     console.error('Error:', error.message);
+//     res.status(500).json({ success: false, message: 'Internal server error' });
+//   }
+// });
 router.put('/updateDirectMode/:UserId', async (req, res) => {
   try {
     const userId = req.params.UserId;
     const { socialMediaId, directMode } = req.body;
-    console.log('userId:', userId);
-    console.log('socialMediaId:', socialMediaId);
-    
-    // Convert directMode to boolean (only if needed)
+
+    // Convert directMode to boolean
     const directModeValue = typeof directMode === 'string' ? directMode === 'true' : directMode;
 
-    console.log('directModeValue:', directModeValue);
-
+    // Update userDirectMode
     await User.updateOne({ id: userId }, { $set: { userDirectMode: directModeValue } });
-    await User.updateOne(
-      { id: userId, 'socialMedia._id': socialMediaId },
-      { $set: { 'socialMedia.$.socialMediaDirectMode': directModeValue } }
-    );
+
+    // Update social media accounts
+    const user = await User.findOne({ id: userId });
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Set socialMediaDirectMode for each social media account
+    for (const socialMedia of user.socialMedia) {
+      const updateValue = socialMedia._id.toString() === socialMediaId ? directModeValue : socialMedia.socialMediaDirectMode;
+      await User.updateOne(
+        { id: userId, 'socialMedia._id': socialMedia._id },
+        { $set: { 'socialMedia.$.socialMediaDirectMode': updateValue } }
+      );
+    }
 
     res.json({ success: true, message: 'Direct mode updated successfully' });
   } catch (error) {
