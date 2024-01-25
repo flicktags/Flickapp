@@ -118,7 +118,7 @@ router.put('/updateDirectMode/:UserId', async (req, res) => {
   try {
     const userId = req.params.UserId;
     const { socialMediaId, directMode } = req.body;
-    
+
     // Convert directMode to boolean
     const directModeValue = typeof directMode === 'string' ? directMode === 'true' : directMode;
 
@@ -131,6 +131,7 @@ router.put('/updateDirectMode/:UserId', async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
+    // Set socialMediaDirectMode for each social media account
     for (const socialMedia of user.socialMedia) {
       const updateValue = socialMedia._id === socialMediaId ? directModeValue : false;
       await User.updateOne(
@@ -145,5 +146,6 @@ router.put('/updateDirectMode/:UserId', async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
+
 
 module.exports = router;
