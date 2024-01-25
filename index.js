@@ -5,7 +5,6 @@ const app = express();
 const cors=require('cors');
 app.use(cors());
 const port = 3000;
-
 const { runMiddleware, handleImageUpload } = require("./Api/Routes/imageupload");
 const user=require('./Api/Routes/user_api')
 const social_media=require('./Api/Routes/social_media')
@@ -18,8 +17,8 @@ app.use('/user', user);
 app.use('/socialmedia', social_media);
 app.use('/UserImg', userImage);
 app.use('/flickCode',flickCode);
-app.use(express.static('public'));  
-
+app.use(express.static('public'));
+app.use(cors());
 app.post("/UserImg/uploadImage/:id", async (req, res) => {
   await handleImageUpload(req, res);
 });
@@ -27,7 +26,7 @@ app.post("/UserImg/uploadImage/:id", async (req, res) => {
   res.status(404).json({
     error: 'Bad Request'
   });
-});   
+});
  
 const uri = "mongodb+srv://mfahimch:78678PPIred@cluster0.eviduti.mongodb.net/?retryWrites=true&w=majority";
 async function run() {
@@ -46,8 +45,6 @@ async function run() {
 }
 
 run();
-
-
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
