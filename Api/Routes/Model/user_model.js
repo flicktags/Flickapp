@@ -21,7 +21,8 @@ const socialMediaSchema = new mongoose.Schema({
   },
   isActive: {
     type: Boolean,
-    required: false
+    required: false,
+   default: false 
   },
   socialMediaDirectMode: {
     type: Boolean,
