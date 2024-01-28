@@ -19,7 +19,7 @@ router.put("/:id", async (req, res, next) => {
         socialMediaType: req.body.socialMediaType,
         socialMediaLink: req.body.socialMediaLink,
         category: req.body.category,
-        isActive: req.body.isActive || false,
+        isActive: false,
       });
   
       // Save the updated user
