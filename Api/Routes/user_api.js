@@ -158,7 +158,85 @@ router.delete('/delete/:id', async (req, res, next) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+router.post('/devicetoken/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const { deviceToken } = req.body;
 
+  try {
+    // Find the user by ID
+    const user = await User.findOne({ id: userId });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Add the new device token to the array
+    user.deviceToken.push(deviceToken);
+
+    // If there are more than 4 device tokens, remove the oldest one
+    if (user.deviceToken.length > 4) {
+      user.deviceToken.shift(); // Remove the first element (oldest token)
+    }
+
+    // Save the updated user object
+    await user.save();
+
+    return res.status(200).json({ message: 'Device token added successfully' });
+  } catch (error) {
+    console.error('Error adding device token:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+/// user reponse on push notifcations
+router.post('/updatesharebygategorey/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const { sharebycategorey } = req.body;
+
+  try {
+    // Find the user by ID
+    const user = await User.findOne({ id: userId });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Update the sharebycategorey field
+    user.sharebycategorey = sharebycategorey;
+
+    // Save the updated user object
+    await user.save();
+
+    return res.status(200).json({ message: 'Share by category updated successfully' });
+  } catch (error) {
+    console.error('Error updating share by category:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+//uset main share by category on and offf status update
+router.post('/update-share-by-category/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const { userSharebyGategorey } = req.body;
+
+  try {
+    // Find the user by ID
+    const user = await User.findOne({ id: userId });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Update the userSharebyGategorey field
+    user.userSharebyGategorey = userSharebyGategorey;
+
+    // Save the updated user object
+    await user.save();
+
+    return res.status(200).json({ message: 'User share by category updated successfully' });
+  } catch (error) {
+    console.error('Error updating user share by category:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 module.exports = router;
