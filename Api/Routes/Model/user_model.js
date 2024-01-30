@@ -21,20 +21,12 @@ const socialMediaSchema = new mongoose.Schema({
   },
   isActive: {
     type: Boolean,
-    required: false,
-   default: false 
+    required: false
   },
   socialMediaDirectMode: {
     type: Boolean,
     required: false
   }
-});
-const imgSchema = new mongoose.Schema({
-  name: String,
-  img: {
-    data: Buffer,
-    contentType: String,
-  },
 });
 const userSchema = new mongoose.Schema({
   id:{
@@ -75,13 +67,23 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     required: false
   },
- userDirectMode: {
+  userDirectMode: {
     type: Boolean,
     required: false
   },
   userImage: {
     type:String,
-    
+  },
+  sharebycategorey: {
+    type: String,
+    required: false
+  },
+  userSharebyGategorey:{
+    type: Boolean,
+    required: false
+  },
+  deviceToken:{
+    type: [String],  
   },
   socialMedia: [socialMediaSchema]
 });
