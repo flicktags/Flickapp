@@ -192,7 +192,7 @@ router.post('/devicetoken/:userId', async (req, res) => {
   }
 });
 /// user reponse on push notifcations
-router.put('/updatesharebygategorey/:userId', async (req, res) => {
+router.put('/updatesharebycategoreyoption/:userId', async (req, res) => {
   
   const { userId } = req.params;
   const { isChoosedCatgBtnOptions,selectedCatgBtnOptionValue } = req.body;
