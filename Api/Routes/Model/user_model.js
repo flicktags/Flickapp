@@ -74,11 +74,12 @@ const userSchema = new mongoose.Schema({
   userImage: {
     type:String,
   },
-  sharebycategorey: {
+  
+  selectedCatgBtnOptionValue: {
     type: String,
     required: false
   },
-  userSharebyGategorey:{
+  isChoosedCatgBtnOptions:{
     type: Boolean,
     required: false
   },
