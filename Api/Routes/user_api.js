@@ -60,6 +60,7 @@ router.put('/', async (req, res, next) => {
       isActive: req.body.isActive,
       isLost:req.bodyisLost,
       lostMassege:req.body.lostMassege,
+      userSharebyGategorey:true,
       socialMedia: req.body.socialMedia || []
     });
 
