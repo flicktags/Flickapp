@@ -174,6 +174,11 @@ router.post('/devicetoken/:userId', async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
+    // Check if the device token already exists in the array
+    if (user.deviceToken.includes(deviceToken)) {
+      return res.status(400).json({ error: 'Device token already exists' });
+    }
+
     // Add the new device token to the array
     user.deviceToken.push(deviceToken);
 
