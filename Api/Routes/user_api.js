@@ -32,7 +32,7 @@ router.get('/:id', async (req, res, next) => {
         isLost:user.isLost,
         lostMassege:user.lostMassege,
         directMode:user.userDirectMode,
-        isSHareByCatgOn.user.isSHareByCatgOn,
+        isSHareByCatgOn:user.isSHareByCatgOn,
         isChoosedCatgBtnOptions:user.isChoosedCatgBtnOptions,
         selectedCatgBtnOptionValue:user.selectedCatgBtnOptionValue,
         deviceToken:user.deviceToken||[],
