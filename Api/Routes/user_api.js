@@ -228,9 +228,9 @@ console.log(isChoosedCatgBtnOptions)
 
 
 //uset main share by category on and offf status update
-router.post('/update-share-by-category/:userId', async (req, res) => {
+router.post('/isSHareByCatgOn/:userId', async (req, res) => {
   const { userId } = req.params;
-  const { isChoosedCatgBtnOptions } = req.body;
+  const { isSHareByCatgOn } = req.body;
 console.log(isChoosedCatgBtnOptions)
   try {
     // Find the user by ID
@@ -241,7 +241,7 @@ console.log(isChoosedCatgBtnOptions)
     }
 
     // Update the userSharebyGategorey field
-    user.isChoosedCatgBtnOptions = isChoosedCatgBtnOptions;
+    user.isSHareByCatgOn = isSHareByCatgOn;
 
     // Save the updated user object
     await user.save();
