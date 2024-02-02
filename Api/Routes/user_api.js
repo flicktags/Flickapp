@@ -33,6 +33,7 @@ router.get('/:id', async (req, res, next) => {
         lostMassege:user.lostMassege,
         directMode:user.userDirectMode,
         isChoosedCatgBtnOptions:user.isChoosedCatgBtnOptions,
+        selectedCatgBtnOptionValue:user.selectedCatgBtnOptionValue,
         deviceToken:user.deviceToken||[],
         socialMedia: user.socialMedia || []
       }
