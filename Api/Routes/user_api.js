@@ -231,7 +231,7 @@ console.log(isChoosedCatgBtnOptions)
 router.post('/isSHareByCatgOn/:userId', async (req, res) => {
   const { userId } = req.params;
   const { isSHareByCatgOn } = req.body;
-console.log(isChoosedCatgBtnOptions)
+console.log(isSHareByCatgOn)
   try {
     // Find the user by ID
     const user = await User.findOne({ id: userId });
