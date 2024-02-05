@@ -253,4 +253,30 @@ console.log(isSHareByCatgOn)
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
+router.get('/share-by-categorey-update/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Find the user document based on the provided user ID
+    const user = await User.findOne({ id: userId });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Capture the values you want along with the timestamp of the last modification
+    const userData = {
+      isSHareByCatgOn: user.isSHareByCatgOn,
+      selectedCatgBtnOptionValue: user.selectedCatgBtnOptionValue,
+      isChoosedCatgBtnOptions: user.isChoosedCatgBtnOptions
+    };
+
+    // Return the retrieved data along with the timestamp
+    res.json(userData);
+  } catch (error) {
+    console.error('Error retrieving user data:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 module.exports = router;
