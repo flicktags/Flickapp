@@ -63,6 +63,7 @@ router.put('/', async (req, res, next) => {
       isLost:req.bodyisLost,
       isChoosedCatgBtnOptions:false,
       lostMassege:req.body.lostMassege,
+      isChoosedCatgBtnOptions:true,
       socialMedia: req.body.socialMedia || []
     });
 
