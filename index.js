@@ -27,7 +27,7 @@ app.post("/UserImg/uploadImage/:id", async (req, res) => {
   });
 });
  
-const uri = "mongodb+srv://mfahimch:78678PPIred@cluster0.eviduti.mongodb.net/?retryWrites=true&w=majority";
+const uri = "mongodb+srv://flicktags:fHLfamRWq6Os4jO7@userdata.vevruyz.mongodb.net/?retryWrites=true&w=majority";
 async function run() {
   try {
     const connectionString = "mongodb://localhost:27017/test";
