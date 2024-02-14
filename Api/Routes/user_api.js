@@ -61,6 +61,7 @@ router.put('/', async (req, res, next) => {
       userImage: req.body.userImage,
       isActive: req.body.isActive,
       isLost:req.bodyisLost,
+      isSHareByCatgOn:false,
       isChoosedCatgBtnOptions:false,
       lostMassege:req.body.lostMassege,
       isChoosedCatgBtnOptions:true,
