@@ -4,9 +4,9 @@ const cloudinary = require("cloudinary").v2;
 const streamifier = require('streamifier');
 const User = require("./Model/user_model");
 cloudinary.config({
-  cloud_name: 'dxyhmgghf',
-  api_key: '315569673652811',
-  api_secret: '2vWMo0Od99h_maW8P-9DKjc_Neo',
+  cloud_name: 'diwspe6yi',
+  api_key: '457834299199625',
+  api_secret: 'cOt4I5PxEZ7fPWOI0vmzXYzLt6o',
   secure: true,
 });
 
