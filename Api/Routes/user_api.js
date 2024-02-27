@@ -29,7 +29,7 @@ router.get('/:id', async (req, res, next) => {
         organization: user.organization,
         userImage: user.userImage,
         isActive: user.isActive,
-        isLost:user.isLost,
+        isEnabledLostMode:user.isLost,
         lostMassege:user.lostMassege,
         directMode:user.userDirectMode,
         isSHareByCatgOn:user.isSHareByCatgOn,
