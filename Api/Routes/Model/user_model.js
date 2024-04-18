@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 
 const socialMediaSchema = new mongoose.Schema({
-
- 
   socialMediaName: {
     type: String,
     required: false
@@ -28,11 +26,12 @@ const socialMediaSchema = new mongoose.Schema({
     required: false
   }
 });
+
 const userSchema = new mongoose.Schema({
   id:{
-  type:String,
-  required:false,
-  unique:true
+    type:String,
+    required:false,
+    unique:true
   },
   name: {
     type: String,
@@ -74,8 +73,8 @@ const userSchema = new mongoose.Schema({
   userImage: {
     type:String,
   },
-  isSHareByCatgOn:{
- type: Boolean,
+  isShareByCatgOn:{
+    type: Boolean,
     required: false
   },
   selectedCatgBtnOptionValue: {
@@ -90,10 +89,16 @@ const userSchema = new mongoose.Schema({
     type: [String],  
   },
   socialMedia: [socialMediaSchema]
-});
+}, { timestamps: true });
 
+// Add pre hook to set createdAt timestamp
+userSchema.pre('save', function(next) {
+  if (!this.createdAt) {
+    this.createdAt = new Date();
+  }
+  next();
+});
 
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
- 
