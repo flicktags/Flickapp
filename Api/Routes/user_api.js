@@ -296,7 +296,7 @@ console.log(TagActivated)
     }
 
     // Update the userSharebyGategorey field
-    user.Purchased = TagActivated;
+    user.TagActivated = TagActivated;
 
     // Save the updated user object
     await user.save();
