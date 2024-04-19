@@ -88,7 +88,7 @@ const userSchema = new mongoose.Schema({
   deviceToken:{
     type: [String],  
   },
-  Purchased:{
+  TagActivated:{
     type: Boolean,
     required: false
   },
