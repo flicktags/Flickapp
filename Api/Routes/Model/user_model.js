@@ -29,9 +29,9 @@ const socialMediaSchema = new mongoose.Schema({
 
 const userSchema = new mongoose.Schema({
   id:{
-    type:String,
-    required:false,
-    unique:true
+  type:String,
+  required:false,
+  unique:true
   },
   name: {
     type: String,
@@ -73,8 +73,8 @@ const userSchema = new mongoose.Schema({
   userImage: {
     type:String,
   },
-  isShareByCatgOn:{
-    type: Boolean,
+  isSHareByCatgOn:{
+ type: Boolean,
     required: false
   },
   selectedCatgBtnOptionValue: {
@@ -89,7 +89,6 @@ const userSchema = new mongoose.Schema({
     type: [String],  
   },
   socialMedia: [socialMediaSchema]
-
 });
 
 const User = mongoose.model('User', userSchema);
