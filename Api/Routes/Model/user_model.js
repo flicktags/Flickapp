@@ -89,7 +89,7 @@ const userSchema = new mongoose.Schema({
     type: [String],  
   },
   socialMedia: [socialMediaSchema]
-}, 
+
 });
 
 const User = mongoose.model('User', userSchema);
