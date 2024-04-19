@@ -88,6 +88,10 @@ const userSchema = new mongoose.Schema({
   deviceToken:{
     type: [String],  
   },
+  Purchased:{
+    type: Boolean,
+    required: false
+  },
   socialMedia: [socialMediaSchema]
 });
 
