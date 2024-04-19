@@ -89,14 +89,7 @@ const userSchema = new mongoose.Schema({
     type: [String],  
   },
   socialMedia: [socialMediaSchema]
-}, { timestamps: true });
-
-// Add pre hook to set createdAt timestamp
-userSchema.pre('save', function(next) {
-  if (!this.createdAt) {
-    this.createdAt = new Date();
-  }
-  next();
+}, 
 });
 
 const User = mongoose.model('User', userSchema);
