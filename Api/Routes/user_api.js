@@ -33,7 +33,7 @@ router.get('/:id', async (req, res, next) => {
         isEnabledLostMode:user.isLost,
         lostMassege:user.lostMassege,
         directMode:user.userDirectMode,
-        TagPurchased:user.Purchased,
+        TagActivated:user.Purchased,
         isSHareByCatgOn:user.isSHareByCatgOn,
         isChoosedCatgBtnOptions:user.isChoosedCatgBtnOptions,
         selectedCatgBtnOptionValue:user.selectedCatgBtnOptionValue,
@@ -283,10 +283,10 @@ router.get('/share-by-categorey-update/:userId', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-router.post('/PurchasedTag/:userId', async (req, res) => {
+router.post('/TagActivated/:userId', async (req, res) => {
   const { userId } = req.params;
-  const { TagPurchased } = req.body;
-console.log(TagPurchased)
+  const { TagActivated } = req.body;
+console.log(TagActivated)
   try {
     // Find the user by ID
     const user = await User.findOne({ id: userId });
@@ -296,7 +296,7 @@ console.log(TagPurchased)
     }
 
     // Update the userSharebyGategorey field
-    user.Purchased = TagPurchased;
+    user.Purchased = TagActivated;
 
     // Save the updated user object
     await user.save();
