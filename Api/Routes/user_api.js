@@ -34,7 +34,7 @@ router.get('/:id', async (req, res, next) => {
         isEnabledLostMode:user.isLost,
         lostMassege:user.lostMassege,
         directMode:user.userDirectMode,
-        TagActivated:user.Purchased,
+        TagActivated:user.TagActivated,
         isSHareByCatgOn:user.isSHareByCatgOn,
         isChoosedCatgBtnOptions:user.isChoosedCatgBtnOptions,
         selectedCatgBtnOptionValue:user.selectedCatgBtnOptionValue,
@@ -65,7 +65,7 @@ router.put('/', async (req, res, next) => {
       organization: req.body.organization,
       userImage: req.body.userImage,
       isActive: req.body.isActive,
-      Purchased:false,
+      TagActivated:false,
       isLost:req.bodyisLost,
       isSHareByCatgOn:false,
       isChoosedCatgBtnOptions:false,
@@ -193,7 +193,7 @@ router.post('/devicetoken/:userId', async (req, res) => {
     user.deviceToken.push(deviceToken);
 
     // If there are more than 4 device tokens, remove the oldest one
-    if (user.deviceToken.length > 4) {
+    if (user.deviceToken.length > 1) {
       user.deviceToken.shift(); // Remove the first element (oldest token)
     }
 
@@ -286,6 +286,9 @@ router.get('/share-by-categorey-update/:userId', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+
+
 router.post('/TagActivated/:userId', async (req, res) => {
   const { userId } = req.params;
   const { TagActivated } = req.body;
