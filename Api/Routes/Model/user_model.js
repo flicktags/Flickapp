@@ -92,6 +92,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     required: false
   },
+    registrationDate: {
+    type: Date,
+    default: Date.now
+  },
   socialMedia: [socialMediaSchema]
 });
 
