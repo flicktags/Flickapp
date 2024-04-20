@@ -26,6 +26,7 @@ router.get('/:id', async (req, res, next) => {
         name: user.name,
         email: user.email,
         phone: user.phone,
+        registrationDate:user.registrationDate,
         profession: user.profession,
         organization: user.organization,
         userImage: user.userImage,
@@ -56,6 +57,7 @@ router.put('/', async (req, res, next) => {
   try {
     const newUser = new User({
       id:req.body.id,
+      registrationDate:new Date(),
       name: req.body.name,
       email: req.body.email,
       phone: req.body.phone,
