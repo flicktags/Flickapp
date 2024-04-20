@@ -63,6 +63,7 @@ router.put('/', async (req, res, next) => {
       organization: req.body.organization,
       userImage: req.body.userImage,
       isActive: req.body.isActive,
+      Purchased:false,
       isLost:req.bodyisLost,
       isSHareByCatgOn:false,
       isChoosedCatgBtnOptions:false,
