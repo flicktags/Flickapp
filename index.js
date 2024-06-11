@@ -6,6 +6,7 @@ const cors=require('cors');
 app.use(cors());
 const port = 3000;
 const { runMiddleware, handleImageUpload } = require("./Api/Routes/imageupload");
+const {handlePdfUpload} = require("./Api/Routes/user_pdf_upload")
 const user=require('./Api/Routes/user_api')
 const social_media=require('./Api/Routes/social_media')
 const userImage = require('./Api/Routes/index');
@@ -21,13 +22,17 @@ app.use(express.static('public'));
 app.post("/UserImg/uploadImage/:id", async (req, res) => {
   await handleImageUpload(req, res);
 });
- app.use((req, res, next) => { 
+
+app.post("/UserPdf/uploadPdf/:id", async (req, res) => {
+  console.log('Upload'); 
+  await handlePdfUpload(req, res);
+});
+app.use((req, res, next) => { 
   res.status(404).json({
-    error: 'Bad Request'
+    error: 'Bad Request'  
   });
 });
- 
-const uri = "mongodb+srv://flicktags:fHLfamRWq6Os4jO7@userdata.vevruyz.mongodb.net/?retryWrites=true&w=majority";
+uri = "mongodb+srv://flicktags:fHLfamRWq6Os4jO7@userdata.vevruyz.mongodb.net/?retryWrites=true&w=majority";
 async function run() {
   try {
     const connectionString = "mongodb://localhost:27017/test";

@@ -23,31 +23,43 @@ function runMiddleware(req, res, fn) {
   });
 }
 
-
-async function handleImageUpload(req, res) {
+async function handlePdfUpload(req, res) {
   try {
     await runMiddleware(req, res, upload);
 
     // console.log(req.file.buffer);
     const userId = req.params.id;
+    const socialMediaId = req.body.socialMediaId;
+
+    // Find user by ID
     const user = await User.findOne({ id: userId });
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
+
+    // Find social media handle by ID
+    const socialMedia = user.socialMedia.id(socialMediaId);
+
+    if (!socialMedia) {
+      return res.status(404).json({ error: "Social Media handle not found" });
+    }
+
     const stream = cloudinary.uploader.upload_stream(
-      { folder: "flick-app-userimage" },
-     async (error, result) => {
+      { folder: "flick-app-userpdf" },
+      async (error, result) => {
         if (error) {
           console.error(error);
           res.status(500).json({ error: 'Internal Server Error' });
         } else {
           console.log(result.url);
 
-           user.userImage = result.url;
-           const usersave = await user.save();
-           res.status(200).json("Image saved");
+          // Update the user's social media handle with the PDF URL
+          socialMedia.userPdf = result.url;
 
+          // Save the updated user object
+          await user.save();
+          res.status(200).json("PDF saved and social media handle updated");
         }
       }
     );
@@ -59,5 +71,8 @@ async function handleImageUpload(req, res) {
   }
 }
 
-module.exports = { runMiddleware, handleImageUpload };
+module.exports = handlePdfUpload;
+
+
+module.exports = { runMiddleware, handlePdfUpload };
 

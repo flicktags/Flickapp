@@ -24,7 +24,10 @@ const socialMediaSchema = new mongoose.Schema({
   socialMediaDirectMode: {
     type: Boolean,
     required: false
-  }
+  },
+  userPdf: {
+    type:String,
+  },
 });
 
 const userSchema = new mongoose.Schema({
@@ -96,6 +99,7 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
+ 
   socialMedia: [socialMediaSchema]
 });
 
