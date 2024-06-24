@@ -2,7 +2,7 @@ const express =require("express");
 const router=express.Router();
 const mongoose=require('mongoose');
 const User=require('../Routes/Model/user_model')
-
+const ShareInfo = require('../Routes/Model/share-info');
 // Middleware to parse JSON
 router.use(express.json());
 
@@ -314,4 +314,65 @@ console.log(TagActivated)
   }
 });
 
+//share user information
+router.get('/user-info/share', async (req, res) => {
+  const { userId } = req.body;
+  console.log(userId);
+  try {
+   
+    
+    // Check if the userId exists in Users collection based on custom 'id' field
+    const existingUser = await User.findOne({ id: userId });
+    if (!existingUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Fetch all share info related to the user
+    const shareInfos = await ShareInfo.find({ userId: existingUser._id });
+
+    return res.status(200).json({ data: shareInfos });
+  } catch (error) {
+    console.error('Error fetching share info:', error);
+    return res.status(500).json({ message: 'Error fetching share info', error });
+  }
+});
+ 
+router.post('/user-info/share',async (req, res) => {
+  try {
+    const {
+      userId,  // This should be the custom 'id' field, not the MongoDB '_id'
+      email,
+      name,
+      phone,
+      jobTitle,
+      company,
+      notes
+    } = req.body;
+
+    // Check if the userId exists in Users collection based on custom 'id' field
+    const existingUser = await User.findOne({ id: userId });
+    if (!existingUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Create new ShareInfo document
+    const shareInfo = new ShareInfo({
+      userId: existingUser._id,  // Link to the internal MongoDB _id of the User
+      email,
+      name,
+      phone,
+      jobTitle,
+      company,
+      notes
+    });
+
+    // Save ShareInfo document
+    const savedShareInfo = await shareInfo.save();
+
+    return res.status(201).json({ message: "Information Save Success", data: savedShareInfo });
+  } catch (error) {
+    console.error('Error saving share info:', error);
+    return res.status(500).json({ message: 'Error saving share info', error });
+  }
+});
 module.exports = router;
