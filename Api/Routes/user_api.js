@@ -315,7 +315,7 @@ console.log(TagActivated)
 });
 
 //share user information
-router.get('/user-info/share', async (req, res) => {
+router.get('/leadcapture', async (req, res) => {
   const { userId } = req.body;
   console.log(userId);
   try {
