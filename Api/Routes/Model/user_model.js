@@ -53,6 +53,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+  subscriptionType:{
+    type: String,
+    required: false
+  },
   organization: {
     type: String,
     required: false

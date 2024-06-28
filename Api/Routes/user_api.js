@@ -27,6 +27,7 @@ router.get('/:id', async (req, res, next) => {
         email: user.email,
         phone: user.phone,
         registrationDate:user.registrationDate,
+        subscriptionType:user.subscriptionType,
         profession: user.profession,
         organization: user.organization,
         userImage: user.userImage,
@@ -71,6 +72,7 @@ router.put('/', async (req, res, next) => {
       isChoosedCatgBtnOptions:false,
       lostMassege:req.body.lostMassege,
       isChoosedCatgBtnOptions:true,
+      subscriptionType:"pro",
       socialMedia: req.body.socialMedia || []
     });
 
