@@ -318,9 +318,8 @@ console.log(TagActivated)
 
 //share user information
 router.get('/contact-info/leadcapture', async (req, res) => {
-  console.log('request recived');
   const { userId } = req.body;
-  console.log(userId);
+
   try {
    
     
