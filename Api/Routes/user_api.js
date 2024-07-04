@@ -317,8 +317,8 @@ console.log(TagActivated)
 });
 
 //share user information
-router.get('/contact-info/leadcapture', async (req, res) => {
-  const { userId } = req.body;
+router.get('/contact-info/leadcapture/:userId', async (req, res) => {
+  const { userId } = req.params;
 
   try {
    
