@@ -19,7 +19,7 @@ function runMiddleware(req, res, fn) {
         return reject(result);
       }
       return resolve(result);
-    });
+    });  
   });
 }
 
