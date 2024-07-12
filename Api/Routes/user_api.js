@@ -350,7 +350,7 @@ router.post('/user-info/share',async (req, res) => {
       company,
       notes
     } = req.body;
-
+ 
     // Check if the userId exists in Users collection based on custom 'id' field
     const existingUser = await User.findOne({ id: userId });
     if (!existingUser) {
