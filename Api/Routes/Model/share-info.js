@@ -31,10 +31,10 @@ const shareInfoSchema = new mongoose.Schema({
     required:false
   }
   ,
-//   sharedDate: {
-//     type: Date,
-//     default: Date.now
-//   } 
+  sharedDate: {
+    type: Date,
+    default: Date.now
+  } 
 });
 
 const ShareInfo = mongoose.model('ShareInfo', shareInfoSchema);
