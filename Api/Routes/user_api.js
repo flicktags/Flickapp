@@ -377,4 +377,59 @@ router.post('/user-info/share',async (req, res) => {
     return res.status(500).json({ message: 'Error saving share info', error });
   }
 });
+router.put('/user-info/leadcapture-update/:id', async (req, res) => {
+  try {
+    const shareInfoId = req.params.id;
+    const {
+      email,
+      name,
+      phone,
+      jobTitle,
+      company,
+      notes
+    } = req.body;
+
+    // Find the ShareInfo document by ID and update it
+    const updatedShareInfo = await ShareInfo.findByIdAndUpdate(
+      shareInfoId,
+      {
+        email,
+        name,
+        phone,
+        jobTitle,
+        company,
+        notes
+      },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedShareInfo) {
+      return res.status(404).json({ error: 'Shared contact info not found' });
+    }
+
+    return res.status(200).json({ message: 'Information update success', data: updatedShareInfo });
+  } catch (error) {
+    console.error('Error updating share info:', error);
+    return res.status(500).json({ message: 'Error updating share info', error });
+  }
+});
+router.delete('/user-info/leadcapture-delete/:id', async (req, res) => {
+  try {
+    const shareInfoId = req.params.id;
+
+    // Find the ShareInfo document by ID and delete it
+    const deletedShareInfo = await ShareInfo.findByIdAndDelete(shareInfoId);
+
+    if (!deletedShareInfo) {
+      return res.status(404).json({ error: 'Shared contact info not found' });
+    }
+
+    return res.status(200).json({ message: 'Information delete success' });
+  } catch (error) {
+    console.error('Error deleting share info:', error);
+    return res.status(500).json({ message: 'Error deleting share info', error });
+  }
+});
+
+
 module.exports = router; 
