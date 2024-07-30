@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 
 const socialMediaSchema = new mongoose.Schema({
+
+ 
   socialMediaName: {
     type: String,
     required: false
@@ -24,12 +26,8 @@ const socialMediaSchema = new mongoose.Schema({
   socialMediaDirectMode: {
     type: Boolean,
     required: false
-  },
-  userPdf: {
-    type:String,
-  },
+  }
 });
-
 const userSchema = new mongoose.Schema({
   id:{
   type:String,
@@ -50,10 +48,6 @@ const userSchema = new mongoose.Schema({
     required: false 
   },
   profession: {
-    type: String,
-    required: false
-  },
-  subscriptionType:{
     type: String,
     required: false
   },
@@ -80,6 +74,9 @@ const userSchema = new mongoose.Schema({
   userImage: {
     type:String,
   },
+  userBannerImage: {
+    type:String,
+  },
   isSHareByCatgOn:{
  type: Boolean,
     required: false
@@ -95,18 +92,19 @@ const userSchema = new mongoose.Schema({
   deviceToken:{
     type: [String],  
   },
-  TagActivated:{
+  Purchased:{
     type: Boolean,
     required: false
   },
-    registrationDate: {
-    type: Date,
-    default: Date.now
+  ColorCode:{
+    type: String,
+    required: false
   },
- 
   socialMedia: [socialMediaSchema]
 });
+
 
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
+ 
