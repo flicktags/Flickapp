@@ -2,7 +2,7 @@ const express =require("express");
 const router=express.Router();
 const mongoose=require('mongoose');
 const User=require('../Routes/Model/user_model')
-
+const ShareInfo = require('../Routes/Model/share-info');
 // Middleware to parse JSON
 router.use(express.json());
 
@@ -22,21 +22,26 @@ router.get('/:id', async (req, res, next) => {
     // Send user details, including social media information
     return res.status(200).json({
       data: {
+        
         name: user.name,
         email: user.email,
         phone: user.phone,
+        registrationDate:user.registrationDate,
+        subscriptionType:user.subscriptionType,
         profession: user.profession,
         organization: user.organization,
         userImage: user.userImage,
         isActive: user.isActive,
-        isLost:user.isLost,
+        isEnabledLostMode:user.isLost,
         lostMassege:user.lostMassege,
         directMode:user.userDirectMode,
+        TagActivated:user.TagActivated,
         isSHareByCatgOn:user.isSHareByCatgOn,
         isChoosedCatgBtnOptions:user.isChoosedCatgBtnOptions,
         selectedCatgBtnOptionValue:user.selectedCatgBtnOptionValue,
         deviceToken:user.deviceToken||[],
         socialMedia: user.socialMedia || []
+        
       }
     });
     
@@ -53,6 +58,7 @@ router.put('/', async (req, res, next) => {
   try {
     const newUser = new User({
       id:req.body.id,
+      registrationDate:new Date(),
       name: req.body.name,
       email: req.body.email,
       phone: req.body.phone,
@@ -60,11 +66,13 @@ router.put('/', async (req, res, next) => {
       organization: req.body.organization,
       userImage: req.body.userImage,
       isActive: req.body.isActive,
+      TagActivated:false,
       isLost:req.bodyisLost,
       isSHareByCatgOn:false,
       isChoosedCatgBtnOptions:false,
       lostMassege:req.body.lostMassege,
       isChoosedCatgBtnOptions:true,
+      subscriptionType:"pro",
       socialMedia: req.body.socialMedia || []
     });
 
@@ -187,7 +195,7 @@ router.post('/devicetoken/:userId', async (req, res) => {
     user.deviceToken.push(deviceToken);
 
     // If there are more than 4 device tokens, remove the oldest one
-    if (user.deviceToken.length > 4) {
+    if (user.deviceToken.length > 1) {
       user.deviceToken.shift(); // Remove the first element (oldest token)
     }
 
@@ -255,30 +263,6 @@ console.log(isSHareByCatgOn)
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
-router.post('/PurchasedTag/:userId', async (req, res) => {
-  const { userId } = req.params;
-  const { TagPurchased } = req.body;
-console.log(TagPurchased)
-  try {
-    // Find the user by ID
-    const user = await User.findOne({ id: userId });
-
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    // Update the userSharebyGategorey field
-    user.Purchased = TagPurchased;
-
-    // Save the updated user object
-    await user.save();
-
-    return res.status(200).json({ message: 'User share Purchased category updated successfully' });
-  } catch (error) {
-    console.error('Error updating user Purchased category:', error);
-    return res.status(500).json({ error: 'Internal server error' });
-  }
-});
 router.get('/share-by-categorey-update/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -304,25 +288,148 @@ router.get('/share-by-categorey-update/:userId', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-router.post('/color-codes/:userId', async (req, res) => {
-  try {
-    const userId = req.params.userId;
-    const { colorCode } = req.body;  // Extract colorCode from the request body
 
-    // Find the user document based on the provided user ID
+
+
+router.post('/TagActivated/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const { TagActivated } = req.body;
+console.log(TagActivated)
+  try {
+    // Find the user by ID
     const user = await User.findOne({ id: userId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ error: 'User not found' });
     }
 
-    user.ColorCode = colorCode;
+    // Update the userSharebyGategorey field
+    user.TagActivated = TagActivated;
+
+    // Save the updated user object
     await user.save();
 
-    res.status(200).json({ message: 'Color code saved successfully' });
+    return res.status(200).json({ message: 'User share Purchased category updated successfully' });
   } catch (error) {
-    console.error(error); // Log the error for debugging purposes
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error updating user Purchased category:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 });
-module.exports = router;
+
+//share user information
+router.get('/contact-info/leadcapture/:userId', async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+   
+    
+    // Check if the userId exists in Users collection based on custom 'id' field
+    const existingUser = await User.findOne({ id: userId });
+    if (!existingUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Fetch all share info related to the user
+    const shareInfos = await ShareInfo.find({ userId: existingUser._id });
+
+    return res.status(200).json({ data: shareInfos });
+  } catch (error) {
+    console.error('Error fetching share info:', error);
+    return res.status(500).json({ message: 'Error fetching share info', error });
+  }
+});
+ 
+router.post('/user-info/share',async (req, res) => {
+  try {
+    const {
+      userId,  // This should be the custom 'id' field, not the MongoDB '_id'
+      email,
+      name,
+      phone,
+      jobTitle,
+      company,
+      notes
+    } = req.body;
+ 
+    // Check if the userId exists in Users collection based on custom 'id' field
+    const existingUser = await User.findOne({ id: userId });
+    if (!existingUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Create new ShareInfo document
+    const shareInfo = new ShareInfo({
+      userId: existingUser._id,  // Link to the internal MongoDB _id of the User
+      email,
+      name,
+      phone,
+      jobTitle,
+      company,
+      notes
+    });
+
+    // Save ShareInfo document
+    const savedShareInfo = await shareInfo.save();
+
+    return res.status(201).json({ message: "Information Save Success", data: savedShareInfo });
+  } catch (error) {
+    console.error('Error saving share info:', error);
+    return res.status(500).json({ message: 'Error saving share info', error });
+  }
+});
+router.put('/user-info/leadcapture-update/:id', async (req, res) => {
+  try {
+    const shareInfoId = req.params.id;
+    const {
+      email,
+      name,
+      phone,
+      jobTitle,
+      company,
+      notes
+    } = req.body;
+
+    // Find the ShareInfo document by ID and update it
+    const updatedShareInfo = await ShareInfo.findByIdAndUpdate(
+      shareInfoId,
+      {
+        email,
+        name,
+        phone,
+        jobTitle,
+        company,
+        notes
+      },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedShareInfo) {
+      return res.status(404).json({ error: 'Shared contact info not found' });
+    }
+
+    return res.status(200).json({ message: 'Information update success', data: updatedShareInfo });
+  } catch (error) {
+    console.error('Error updating share info:', error);
+    return res.status(500).json({ message: 'Error updating share info', error });
+  }
+});
+router.delete('/user-info/leadcapture-delete/:id', async (req, res) => {
+  try {
+    const shareInfoId = req.params.id;
+
+    // Find the ShareInfo document by ID and delete it
+    const deletedShareInfo = await ShareInfo.findByIdAndDelete(shareInfoId);
+
+    if (!deletedShareInfo) {
+      return res.status(404).json({ error: 'Shared contact info not found' });
+    }
+
+    return res.status(200).json({ message: 'Information delete success' });
+  } catch (error) {
+    console.error('Error deleting share info:', error);
+    return res.status(500).json({ message: 'Error deleting share info', error });
+  }
+});
+
+
+module.exports = router; 
