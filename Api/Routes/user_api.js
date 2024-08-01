@@ -75,6 +75,8 @@ router.put('/', async (req, res, next) => {
       lostMassege:req.body.lostMassege,
       isChoosedCatgBtnOptions:true,
       subscriptionType:"pro",
+      ColorCode:null,
+      userBannerImage:null, 
       socialMedia: req.body.socialMedia || []
     });
 
