@@ -430,6 +430,27 @@ router.delete('/user-info/leadcapture-delete/:id', async (req, res) => {
     return res.status(500).json({ message: 'Error deleting share info', error });
   }
 });
+router.post('/color-codes/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const { colorCode } = req.body;  // Extract colorCode from the request body
+
+    // Find the user document based on the provided user ID
+    const user = await User.findOne({ id: userId });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.ColorCode = colorCode;
+    await user.save();
+
+    res.status(200).json({ message: 'Color code saved successfully' });
+  } catch (error) {
+    console.error(error); // Log the error for debugging purposes
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 
 module.exports = router; 

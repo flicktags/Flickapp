@@ -5,7 +5,7 @@ const app = express();
 const cors=require('cors');
 app.use(cors());
 const port = 3000;
-const { runMiddleware, handleImageUpload } = require("./Api/Routes/imageupload");
+const { handleImageUpload, userBannerImage } = require("./Api/Routes/imageupload");
 const {handlePdfUpload} = require("./Api/Routes/user_pdf_upload")
 const user=require('./Api/Routes/user_api')
 const social_media=require('./Api/Routes/social_media')
@@ -26,6 +26,14 @@ app.post("/UserImg/uploadImage/:id", async (req, res) => {
 app.post("/UserPdf/uploadPdf/:id", async (req, res) => {
   console.log('Upload'); 
   await handlePdfUpload(req, res);
+});
+app.post("/UserBanner/Image/:id", async (req, res) => {
+  await userBannerImage(req, res);
+});
+ app.use((req, res, next) => { 
+  res.status(404).json({
+    error: 'Bad Request'
+  });
 });
 app.use((req, res, next) => { 
   res.status(404).json({

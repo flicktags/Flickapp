@@ -103,6 +103,10 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
+  ColorCode:{
+    type: String,
+    required: false
+  },
  
   socialMedia: [socialMediaSchema]
 });
