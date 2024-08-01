@@ -106,6 +106,9 @@ const userSchema = new mongoose.Schema({
   ColorCode:{
     type: String,
     required: false
+  },userBannerImage:{
+    type: String,
+    required: false
   },
  
   socialMedia: [socialMediaSchema]

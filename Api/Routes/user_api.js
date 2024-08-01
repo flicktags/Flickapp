@@ -37,6 +37,8 @@ router.get('/:id', async (req, res, next) => {
         directMode:user.userDirectMode,
         TagActivated:user.TagActivated,
         isSHareByCatgOn:user.isSHareByCatgOn,
+        ColorCode:user.ColorCode,
+        userBannerImage:user.userBannerImage, 
         isChoosedCatgBtnOptions:user.isChoosedCatgBtnOptions,
         selectedCatgBtnOptionValue:user.selectedCatgBtnOptionValue,
         deviceToken:user.deviceToken||[],
