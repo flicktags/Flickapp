@@ -110,6 +110,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+  subscriptionType: {
+    type: String,
+    required: false
+  },
+  subscriptionEndDate: {
+    type: Date, 
+    required: false
+  },
  
   socialMedia: [socialMediaSchema]
 });

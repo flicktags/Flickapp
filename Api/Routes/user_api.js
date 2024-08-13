@@ -38,12 +38,13 @@ router.get('/:id', async (req, res, next) => {
         TagActivated:user.TagActivated,
         isSHareByCatgOn:user.isSHareByCatgOn,
         ColorCode:user.ColorCode,
-        userBannerImage:user.userBannerImage, 
+        userBannerImage:user.userBannerImage,
+        subscriptionType:user.subscriptionType,  subscriptionEndDate:user.subscriptionEndDate,
         isChoosedCatgBtnOptions:user.isChoosedCatgBtnOptions,
         selectedCatgBtnOptionValue:user.selectedCatgBtnOptionValue,
         deviceToken:user.deviceToken||[],
-        socialMedia: user.socialMedia || []
-        
+        socialMedia: user.socialMedia || [],
+       
       }
     });
     
@@ -453,6 +454,56 @@ router.post('/color-codes/:userId', async (req, res) => {
   } catch (error) {
     console.error(error); // Log the error for debugging purposes
     res.status(500).json({ message: 'Server error' });
+  }
+});
+// API to update subscription plan
+router.post('/updateSubscription/:userId', async (req, res) => {
+  const userId = req.params.userId;  // Extract userId from the request parameters
+  const { subscriptionPlan } = req.body;
+
+  try {
+    // Calculate subscription end date and determine subscription type
+    let subscriptionEndDate;
+    let subscriptionType;
+    const currentDate = new Date();
+
+    switch (subscriptionPlan) {
+      case "1":
+        subscriptionEndDate = new Date(currentDate.setMonth(currentDate.getMonth() + 1));
+        subscriptionType = "pro";
+        break;
+      case "2":
+        subscriptionEndDate = new Date(currentDate.setMonth(currentDate.getMonth() + 6));
+        subscriptionType = "pro";
+        break;
+      case "3":
+        subscriptionEndDate = new Date(currentDate.setFullYear(currentDate.getFullYear() + 1));
+        subscriptionType = "pro";
+        break;
+      case "4":
+        subscriptionEndDate = currentDate; // Basic subscription, no additional time
+        subscriptionType = "basic";
+        break;
+      default:
+        return res.status(400).json({ message: "Invalid subscription plan" });
+    }
+
+    // Update user with the new subscription end date and subscription type
+    const user = await User.findOneAndUpdate(
+      { id: userId },
+      { subscriptionType: subscriptionType, subscriptionEndDate: subscriptionEndDate },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ message: "Subscription updated successfully", user });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
