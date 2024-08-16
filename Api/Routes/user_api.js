@@ -457,31 +457,94 @@ router.post('/color-codes/:userId', async (req, res) => {
   }
 });
 // API to update subscription plan
+// router.post('/updateSubscription/:userId', async (req, res) => {
+//   const userId = req.params.userId;  // Extract userId from the request parameters
+//   const { subscriptionPlan } = req.body;
+
+//   try {
+//     // Calculate subscription end date and determine subscription type
+//     let subscriptionEndDate;
+//     let subscriptionType;
+//     const currentDate = new Date();
+
+//     switch (subscriptionPlan) {
+//       case "1":
+//         subscriptionEndDate = new Date(currentDate.setMonth(currentDate.getMonth() + 1));
+//         subscriptionType = "pro";
+//         break;
+//       case "2":
+//         subscriptionEndDate = new Date(currentDate.setMonth(currentDate.getMonth() + 6));
+//         subscriptionType = "pro";
+//         break;
+//       case "3":
+//         subscriptionEndDate = new Date(currentDate.setFullYear(currentDate.getFullYear() + 1));
+//         subscriptionType = "pro";
+//         break;
+//       case "4":
+//         subscriptionEndDate = currentDate; // Basic subscription, no additional time
+//         subscriptionType = "basic";
+//         break;
+//       default:
+//         return res.status(400).json({ message: "Invalid subscription plan" });
+//     }
+
+//     // Update user with the new subscription end date and subscription type
+//     const user = await User.findOneAndUpdate(
+//       { id: userId },
+//       { subscriptionType: subscriptionType, subscriptionEndDate: subscriptionEndDate },
+//       { new: true }
+//     );
+
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     res.json({ message: "Subscription updated successfully", user });
+
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
 router.post('/updateSubscription/:userId', async (req, res) => {
   const userId = req.params.userId;  // Extract userId from the request parameters
   const { subscriptionPlan } = req.body;
 
   try {
-    // Calculate subscription end date and determine subscription type
+    // Find the user to get their current subscription details
+    const user = await User.findOne({ id: userId });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Calculate remaining time from the current subscription if any
+    let currentDate = new Date();
+    let remainingTime = 0;
+
+    if (user.subscriptionEndDate && user.subscriptionEndDate > currentDate) {
+      remainingTime = user.subscriptionEndDate - currentDate; // Time remaining in milliseconds
+    }
+
+    // Calculate new subscription end date based on the new plan and remaining time
     let subscriptionEndDate;
     let subscriptionType;
-    const currentDate = new Date();
-
+    
     switch (subscriptionPlan) {
       case "1":
-        subscriptionEndDate = new Date(currentDate.setMonth(currentDate.getMonth() + 1));
+        subscriptionEndDate = new Date(currentDate.setMonth(currentDate.getMonth() + 1) + remainingTime);
         subscriptionType = "pro";
         break;
       case "2":
-        subscriptionEndDate = new Date(currentDate.setMonth(currentDate.getMonth() + 6));
+        subscriptionEndDate = new Date(currentDate.setMonth(currentDate.getMonth() + 6) + remainingTime);
         subscriptionType = "pro";
         break;
       case "3":
-        subscriptionEndDate = new Date(currentDate.setFullYear(currentDate.getFullYear() + 1));
+        subscriptionEndDate = new Date(currentDate.setFullYear(currentDate.getFullYear() + 1) + remainingTime);
         subscriptionType = "pro";
         break;
       case "4":
-        subscriptionEndDate = currentDate; // Basic subscription, no additional time
+        subscriptionEndDate = new Date(currentDate.getTime() + remainingTime); // Basic subscription, only add remaining time
         subscriptionType = "basic";
         break;
       default:
@@ -489,15 +552,10 @@ router.post('/updateSubscription/:userId', async (req, res) => {
     }
 
     // Update user with the new subscription end date and subscription type
-    const user = await User.findOneAndUpdate(
-      { id: userId },
-      { subscriptionType: subscriptionType, subscriptionEndDate: subscriptionEndDate },
-      { new: true }
-    );
+    user.subscriptionType = subscriptionType;
+    user.subscriptionEndDate = subscriptionEndDate;
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    await user.save();
 
     res.json({ message: "Subscription updated successfully", user });
 
