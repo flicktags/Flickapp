@@ -80,6 +80,11 @@ const userSchema = new mongoose.Schema({
   userImage: {
     type:String,
   },
+  userImagePublicId: 
+  {type:String},
+  userBannerImagePublicId:{
+    type:String
+  },
   isSHareByCatgOn:{
  type: Boolean,
     required: false

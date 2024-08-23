@@ -30,11 +30,6 @@ app.post("/UserPdf/uploadPdf/:id", async (req, res) => {
 app.post("/UserBanner/Image/:id", async (req, res) => {
   await userBannerImage(req, res);
 });
- app.use((req, res, next) => { 
-  res.status(404).json({
-    error: 'Bad Request'
-  });
-});
 app.use((req, res, next) => { 
   res.status(404).json({
     error: 'Bad Request'  
