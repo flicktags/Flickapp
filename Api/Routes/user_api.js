@@ -53,15 +53,14 @@ router.get('/:id', async (req, res, next) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
-
 router.put('/', async (req, res, next) => {
-
-
   try {
+    const oneMonthFromNow = new Date();
+    oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1); // Set the subscription to expire in one month
+
     const newUser = new User({
-      id:req.body.id,
-      registrationDate:new Date(),
+      id: req.body.id,
+      registrationDate: new Date(),
       name: req.body.name,
       email: req.body.email,
       phone: req.body.phone,
@@ -69,21 +68,20 @@ router.put('/', async (req, res, next) => {
       organization: req.body.organization,
       userImage: req.body.userImage,
       isActive: req.body.isActive,
-      TagActivated:false,
-      isLost:req.bodyisLost,
-      isSHareByCatgOn:false,
-      isChoosedCatgBtnOptions:false,
-      lostMassege:req.body.lostMassege,
-      isChoosedCatgBtnOptions:true,
-      subscriptionType:"pro",
-      ColorCode:null,
-      userBannerImage:null, 
+      TagActivated: false,
+      isLost: req.body.isLost,
+      isSHareByCatgOn: false,
+      isChoosedCatgBtnOptions: true,
+      lostMassege: req.body.lostMassege,
+      subscriptionType: "trial", // Set the subscription type to "trial"
+      subscriptionEndDate: oneMonthFromNow, // Set the free trial end date to one month from now
+      ColorCode: null,
+      userBannerImage: null, 
       socialMedia: req.body.socialMedia || []
     });
 
     // Save the new user
     const createdUser = await newUser.save();
-
     console.log("User saved successfully:", createdUser);
 
     return res.status(201).json({ data: createdUser }); 
@@ -98,6 +96,50 @@ router.put('/', async (req, res, next) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+// router.put('/', async (req, res, next) => {
+//   try {
+//     const oneMonthFromNow = new Date();
+//     oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1); // Set the subscription to expire in one month
+
+//     const newUser = new User({
+//       id: req.body.id,
+//       registrationDate: new Date(),
+//       name: req.body.name,
+//       email: req.body.email,
+//       phone: req.body.phone,
+//       profession: req.body.profession,
+//       organization: req.body.organization,
+//       userImage: req.body.userImage,
+//       isActive: req.body.isActive,
+//       TagActivated: false,
+//       isLost: req.body.isLost,
+//       isSHareByCatgOn: false,
+//       isChoosedCatgBtnOptions: true,
+//       lostMassege: req.body.lostMassege,
+//       subscriptionType: "trial", // Set the subscription type to "trial"
+//       subscriptionEndDate: oneMonthFromNow, // Set the free trial end date to one month from now
+//       ColorCode: null,
+//       userBannerImage: null, 
+//       socialMedia: req.body.socialMedia || []
+//     });
+
+//     // Save the new user
+//     const createdUser = await newUser.save();
+//     console.log("User saved successfully:", createdUser);
+
+//     return res.status(201).json({ data: createdUser }); 
+//   } catch (error) {
+//     console.error('Error creating user:', error);
+
+//     // Handle specific validation errors
+//     if (error.name === 'ValidationError') {
+//       return res.status(400).json({ error: 'Validation Error', details: error.errors });
+//     }
+
+//     return res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
 
 // Update user data by user firebase id
 router.put('/update/:id', async (req, res, next) => {
