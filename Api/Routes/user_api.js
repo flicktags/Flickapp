@@ -73,7 +73,7 @@ router.put('/', async (req, res, next) => {
       isSHareByCatgOn: false,
       isChoosedCatgBtnOptions: true,
       lostMassege: req.body.lostMassege,
-      subscriptionType: "trial", // Set the subscription type to "trial"
+      subscriptionType: "pro", // Set the subscription type to "trial"
       subscriptionEndDate: oneMonthFromNow, // Set the free trial end date to one month from now
       ColorCode: null,
       userBannerImage: null, 
