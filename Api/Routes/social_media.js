@@ -264,6 +264,33 @@ router.put('/updateDirectMode/:UserId', async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
+//social Media reordering
+router.put('/social_media/re_order', async (req, res) => {
+  try {
+    const { order } = req.body;
+    
+    if (!Array.isArray(order)) {
+      return res.status(400).json({ message: 'Invalid order format. It should be an array of social media IDs.' });
+    }
 
+    const bulkOperations = order.map((id, index) => ({
+      updateOne: {
+        filter: { _id: id },
+        update: { index: index + 1 }
+      }
+    }));
+
+    // Perform bulkWrite to update all documents efficiently
+    const result = await SocialMedia.bulkWrite(bulkOperations);
+
+    return res.status(200).json({
+      message: 'Order updated successfully',
+      modifiedCount: result.modifiedCount
+    });
+  } catch (error) {
+    console.error('Error updating order:', error);
+    return res.status(500).json({ message: 'Internal server error', error });
+  }
+});
 
 module.exports = router;
