@@ -5,6 +5,10 @@ const socialMediaSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+index: {
+  type: Number,
+  required: true
+},
   socialMediaType: {
     type: String,
     required: false
