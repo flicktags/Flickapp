@@ -7,7 +7,7 @@ const socialMediaSchema = new mongoose.Schema({
   },
 index: {
   type: Number,
-  required: true
+  required: false
 },
   socialMediaType: {
     type: String,
