@@ -270,44 +270,52 @@ router.put('/social_media/re_order/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
     const { order } = req.body;
-
-  
+     
     // Check if user exists
-    const user = await User.findOne(userId);
+      const user = await User.findOne({ id: userId });
+     
     if (!user) {
       return res.status(404).json({ message: 'User not found.' });
     }
-  
+
     // Validate order format
     if (!Array.isArray(order)) {
       return res.status(400).json({ message: 'Invalid order format. It should be an array of social media IDs.' });
     }
     // Check if all social media IDs belong to the user
-    const userSocialMediaIds = user.socialMedia.map((media) => media.toString());
-    const invalidIds = order.filter((id) => !userSocialMediaIds.includes(id));
-    if (invalidIds.length > 0) {
-      return res.status(400).json({ message: 'Some social media IDs do not belong to the user.', invalidIds });
-    }
+      // Check if all social media IDs belong to the user
+      const userSocialMediaIds = user.socialMedia.map((media) => media._id.toString());
+      console.log('User Social Media IDs:', userSocialMediaIds);
+      const invalidIds = order.filter((id) => !userSocialMediaIds.includes(id.toString()));
 
-    // Prepare bulk operations for reordering
-    const bulkOperations = order.map((id, index) => ({
-      updateOne: {
-        filter: { _id: id },
-        update: { index: index + 1 }
+      // If there are any invalid IDs, return an error
+      if (invalidIds.length > 0) {
+        return res.status(400).json({
+          message: 'Some social media IDs do not belong to the user.',
+          invalidIds,
+        });
       }
-    }));
 
-    // Perform bulkWrite to update all documents efficiently
-    const result = await SocialMedia.bulkWrite(bulkOperations);
 
-    return res.status(200).json({
-      message: 'Order updated successfully',
-      modifiedCount: result.modifiedCount
-    });
-  } catch (error) {
-    console.error('Error updating order:', error);
-    return res.status(500).json({ message: 'Internal server error', error });
-  }
+      // Reorder the social media array based on the order received
+         const reorderedSocialMedia = order.map((id) => {
+           return user.socialMedia.find((media) => media._id.toString() === id.toString());
+         });
+
+         // Update the social media order in the user's document
+         user.socialMedia = reorderedSocialMedia;
+
+         // Save the updated user document
+         await user.save();
+
+         return res.status(200).json({
+           message: 'Order updated successfully',
+           modifiedCount: 1  // Since you're updating one user document
+         });
+       } catch (error) {
+         console.error('Error updating order:', error);
+         return res.status(500).json({ message: 'Internal server error', error });
+       }
 });
 
 module.exports = router;
