@@ -270,10 +270,6 @@ router.put('/social_media/re_order/:userId', async (req, res) => {
     const userId = req.params.userId;
     const { order } = req.body;
 
-    // Validate order format
-    if (!Array.isArray(order)) {
-      return res.status(400).json({ message: 'Invalid order format. It should be an array of social media IDs.' });
-    }
 
     // Check if user exists
     const user = await User.findById(userId);
@@ -281,6 +277,10 @@ router.put('/social_media/re_order/:userId', async (req, res) => {
       return res.status(404).json({ message: 'User not found.' });
     }
 
+    // Validate order format
+    if (!Array.isArray(order)) {
+      return res.status(400).json({ message: 'Invalid order format. It should be an array of social media IDs.' });
+    }
     // Check if all social media IDs belong to the user
     const userSocialMediaIds = user.socialMedia.map((media) => media.toString());
     const invalidIds = order.filter((id) => !userSocialMediaIds.includes(id));
