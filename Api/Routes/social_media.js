@@ -265,14 +265,30 @@ router.put('/updateDirectMode/:UserId', async (req, res) => {
   }
 });
 //social Media reordering
-router.put('/social_media/re_order', async (req, res) => {
+router.put('/social_media/re_order/:userId', async (req, res) => {
   try {
+    const userId = req.params.userId;
     const { order } = req.body;
-    
+
+    // Validate order format
     if (!Array.isArray(order)) {
       return res.status(400).json({ message: 'Invalid order format. It should be an array of social media IDs.' });
     }
 
+    // Check if user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Check if all social media IDs belong to the user
+    const userSocialMediaIds = user.socialMedia.map((media) => media.toString());
+    const invalidIds = order.filter((id) => !userSocialMediaIds.includes(id));
+    if (invalidIds.length > 0) {
+      return res.status(400).json({ message: 'Some social media IDs do not belong to the user.', invalidIds });
+    }
+
+    // Prepare bulk operations for reordering
     const bulkOperations = order.map((id, index) => ({
       updateOne: {
         filter: { _id: id },
