@@ -273,7 +273,7 @@ router.put('/social_media/re_order/:userId', async (req, res) => {
 
   
     // Check if user exists
-    const user = await User.findById(userId);
+    const user = await User.findOne(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found.' });
     }
