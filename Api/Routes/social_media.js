@@ -268,7 +268,7 @@ router.put('/updateDirectMode/:UserId', async (req, res) => {
 router.put('/social_media/re_order/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
-    const { order } = req.body;
+    // const { order } = req.body;
 
 
     // Check if user exists
@@ -276,7 +276,7 @@ router.put('/social_media/re_order/:userId', async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found.' });
     }
-
+     return;
     // Validate order format
     if (!Array.isArray(order)) {
       return res.status(400).json({ message: 'Invalid order format. It should be an array of social media IDs.' });
