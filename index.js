@@ -26,7 +26,7 @@ app.post("/UserImg/uploadImage/:id", async (req, res) => {
 app.post("/UserPdf/uploadPdf/:id", async (req, res) => {
   console.log('Upload'); 
   await handlePdfUpload(req, res);
-});
+}); 
 app.post("/UserBanner/Image/:id", async (req, res) => {
   await userBannerImage(req, res);
 });
