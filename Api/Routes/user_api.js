@@ -586,7 +586,8 @@ router.post('/updateSubscription/:userId', async (req, res) => {
         subscriptionType = "pro";
         break;
       case "4":
-        subscriptionEndDate = new Date(currentDate.getTime() + remainingTime); // Basic subscription, only add remaining time
+        // subscriptionEndDate = new Date(currentDate.getTime() + remainingTime); // Basic subscription, only add remaining time
+        subscriptionEndDate = user.subscriptionEndDate;
         subscriptionType = "basic";
         break;
       default:
