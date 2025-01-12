@@ -22,7 +22,7 @@ router.get('/:id', async (req, res, next) => {
     // Send user details, including social media information
     return res.status(200).json({
       data: {
-        id:user.id,
+        id:user._id,
         name: user.name,
         email: user.email,
         phone: user.phone,
