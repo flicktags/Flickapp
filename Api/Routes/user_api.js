@@ -44,7 +44,7 @@ router.get('/:id', async (req, res, next) => {
         selectedCatgBtnOptionValue:user.selectedCatgBtnOptionValue,
         deviceToken:user.deviceToken||[],
         socialMedia: user.socialMedia || []
-        
+        //test the upoload
       }
     });
     
