@@ -38,13 +38,13 @@ router.get('/:id', async (req, res, next) => {
         TagActivated:user.TagActivated,
         isSHareByCatgOn:user.isSHareByCatgOn,
         ColorCode:user.ColorCode,
-        mainProfileColorCode:user.mainProfileColorCode,
-        userBannerImage:user.userBannerImage, 
+        userBannerImage:user.userBannerImage,
+        subscriptionType:user.subscriptionType,  subscriptionEndDate:user.subscriptionEndDate,
         isChoosedCatgBtnOptions:user.isChoosedCatgBtnOptions,
         selectedCatgBtnOptionValue:user.selectedCatgBtnOptionValue,
         deviceToken:user.deviceToken||[],
-        socialMedia: user.socialMedia || []
-        //test the upoload
+        socialMedia: user.socialMedia || [],
+       
       }
     });
     
@@ -53,13 +53,14 @@ router.get('/:id', async (req, res, next) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
-
 router.put('/', async (req, res, next) => {
   try {
+    const oneMonthFromNow = new Date();
+    oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1); // Set the subscription to expire in one month
+
     const newUser = new User({
-      id:req.body.id,
-      registrationDate:new Date(),
+      id: req.body.id,
+      registrationDate: new Date(),
       name: req.body.name,
       email: req.body.email,
       phone: req.body.phone,
@@ -67,22 +68,20 @@ router.put('/', async (req, res, next) => {
       organization: req.body.organization,
       userImage: req.body.userImage,
       isActive: req.body.isActive,
-      TagActivated:false,
-      isLost:req.bodyisLost,
-      isSHareByCatgOn:false,
-      isChoosedCatgBtnOptions:false,
-      lostMassege:req.body.lostMassege,
-      isChoosedCatgBtnOptions:true,
-      subscriptionType:"pro",
-      ColorCode:null,
-      mainProfileColorCode:null,
-      userBannerImage:null, 
+      TagActivated: false,
+      isLost: req.body.isLost,
+      isSHareByCatgOn: false,
+      isChoosedCatgBtnOptions: true,
+      lostMassege: req.body.lostMassege,
+      subscriptionType: "pro", // Set the subscription type to "trial"
+      subscriptionEndDate: oneMonthFromNow, // Set the free trial end date to one month from now
+      ColorCode: null,
+      userBannerImage: null, 
       socialMedia: req.body.socialMedia || []
     });
 
     // Save the new user
     const createdUser = await newUser.save();
-
     console.log("User saved successfully:", createdUser);
 
     return res.status(201).json({ data: createdUser }); 
@@ -97,6 +96,50 @@ router.put('/', async (req, res, next) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+// router.put('/', async (req, res, next) => {
+//   try {
+//     const oneMonthFromNow = new Date();
+//     oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1); // Set the subscription to expire in one month
+
+//     const newUser = new User({
+//       id: req.body.id,
+//       registrationDate: new Date(),
+//       name: req.body.name,
+//       email: req.body.email,
+//       phone: req.body.phone,
+//       profession: req.body.profession,
+//       organization: req.body.organization,
+//       userImage: req.body.userImage,
+//       isActive: req.body.isActive,
+//       TagActivated: false,
+//       isLost: req.body.isLost,
+//       isSHareByCatgOn: false,
+//       isChoosedCatgBtnOptions: true,
+//       lostMassege: req.body.lostMassege,
+//       subscriptionType: "trial", // Set the subscription type to "trial"
+//       subscriptionEndDate: oneMonthFromNow, // Set the free trial end date to one month from now
+//       ColorCode: null,
+//       userBannerImage: null, 
+//       socialMedia: req.body.socialMedia || []
+//     });
+
+//     // Save the new user
+//     const createdUser = await newUser.save();
+//     console.log("User saved successfully:", createdUser);
+
+//     return res.status(201).json({ data: createdUser }); 
+//   } catch (error) {
+//     console.error('Error creating user:', error);
+
+//     // Handle specific validation errors
+//     if (error.name === 'ValidationError') {
+//       return res.status(400).json({ error: 'Validation Error', details: error.errors });
+//     }
+
+//     return res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
 
 // Update user data by user firebase id
 router.put('/update/:id', async (req, res, next) => {
@@ -455,6 +498,115 @@ router.post('/color-codes/:userId', async (req, res) => {
   } catch (error) {
     console.error(error); // Log the error for debugging purposes
     res.status(500).json({ message: 'Server error' });
+  }
+});
+// API to update subscription plan
+// router.post('/updateSubscription/:userId', async (req, res) => {
+//   const userId = req.params.userId;  // Extract userId from the request parameters
+//   const { subscriptionPlan } = req.body;
+
+//   try {
+//     // Calculate subscription end date and determine subscription type
+//     let subscriptionEndDate;
+//     let subscriptionType;
+//     const currentDate = new Date();
+
+//     switch (subscriptionPlan) {
+//       case "1":
+//         subscriptionEndDate = new Date(currentDate.setMonth(currentDate.getMonth() + 1));
+//         subscriptionType = "pro";
+//         break;
+//       case "2":
+//         subscriptionEndDate = new Date(currentDate.setMonth(currentDate.getMonth() + 6));
+//         subscriptionType = "pro";
+//         break;
+//       case "3":
+//         subscriptionEndDate = new Date(currentDate.setFullYear(currentDate.getFullYear() + 1));
+//         subscriptionType = "pro";
+//         break;
+//       case "4":
+//         subscriptionEndDate = currentDate; // Basic subscription, no additional time
+//         subscriptionType = "basic";
+//         break;
+//       default:
+//         return res.status(400).json({ message: "Invalid subscription plan" });
+//     }
+
+//     // Update user with the new subscription end date and subscription type
+//     const user = await User.findOneAndUpdate(
+//       { id: userId },
+//       { subscriptionType: subscriptionType, subscriptionEndDate: subscriptionEndDate },
+//       { new: true }
+//     );
+
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     res.json({ message: "Subscription updated successfully", user });
+
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
+router.post('/updateSubscription/:userId', async (req, res) => {
+  const userId = req.params.userId;  // Extract userId from the request parameters
+  const { subscriptionPlan } = req.body;
+
+  try {
+    // Find the user to get their current subscription details
+    const user = await User.findOne({ id: userId });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Calculate remaining time from the current subscription if any
+    let currentDate = new Date();
+    let remainingTime = 0;
+
+    if (user.subscriptionEndDate && user.subscriptionEndDate > currentDate) {
+      remainingTime = user.subscriptionEndDate - currentDate; // Time remaining in milliseconds
+    }
+
+    // Calculate new subscription end date based on the new plan and remaining time
+    let subscriptionEndDate;
+    let subscriptionType;
+    
+    switch (subscriptionPlan) {
+      case "1":
+        subscriptionEndDate = new Date(currentDate.setMonth(currentDate.getMonth() + 1) + remainingTime);
+        subscriptionType = "pro";
+        break;
+      case "2":
+        subscriptionEndDate = new Date(currentDate.setMonth(currentDate.getMonth() + 6) + remainingTime);
+        subscriptionType = "pro";
+        break;
+      case "3":
+        subscriptionEndDate = new Date(currentDate.setFullYear(currentDate.getFullYear() + 1) + remainingTime);
+        subscriptionType = "pro";
+        break;
+      case "4":
+        // subscriptionEndDate = new Date(currentDate.getTime() + remainingTime); // Basic subscription, only add remaining time
+        subscriptionEndDate = user.subscriptionEndDate;
+        subscriptionType = "basic";
+        break;
+      default:
+        return res.status(400).json({ message: "Invalid subscription plan" });
+    }
+
+    // Update user with the new subscription end date and subscription type
+    user.subscriptionType = subscriptionType;
+    user.subscriptionEndDate = subscriptionEndDate;
+
+    await user.save();
+
+    res.json({ message: "Subscription updated successfully", user });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 

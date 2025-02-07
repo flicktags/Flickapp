@@ -28,33 +28,50 @@ async function handleImageUpload(req, res) {
   try {
     await runMiddleware(req, res, upload);
 
-    console.log(req.file.buffer);
     const userId = req.params.id;
     const user = await User.findOne({ id: userId });
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
+
+    // Check if the user has an existing image and the public_id is available
+    if (user.userImagePublicId) {
+      // If public_id exists, delete the old image from Cloudinary
+      await cloudinary.uploader.destroy(user.userImagePublicId, (error, result) => {
+        if (error) {
+          console.error('Error deleting old image:', error);
+        } else {
+          console.log('Old image deleted:', result);
+        }
+      });
+    } else {
+      console.log('No public_id found, skipping deletion of old image.');
+    }
+
+    // Upload new image
     const stream = cloudinary.uploader.upload_stream(
       { folder: "flick-app-userimage" },
-     async (error, result) => {
+      async (error, result) => {
         if (error) {
-          console.error(error);
+          console.error('Error uploading new image:', error);
           res.status(500).json({ error: 'Internal Server Error' });
         } else {
-          console.log(result.url);
+          console.log('New image uploaded:', result.url);
 
-           user.userImage = result.url;
-           const usersave = await user.save();
-           res.status(200).json("Image saved");
-
+          // Save new image URL and public_id
+          user.userImage = result.url;
+          user.userImagePublicId = result.public_id; // Store the new public_id
+          await user.save();
+          
+          res.status(200).json("Image saved");
         }
       }
     );
 
     streamifier.createReadStream(req.file.buffer).pipe(stream);
   } catch (error) {
-    console.error(error);
+    console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }
@@ -62,33 +79,50 @@ async function userBannerImage(req, res) {
   try {
     await runMiddleware(req, res, upload);
 
-    console.log(req.file.buffer);
     const userId = req.params.id;
     const user = await User.findOne({ id: userId });
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
+
+    // Check if the user has an existing banner image and the public_id is available
+    if (user.userBannerImagePublicId) {
+      // If public_id exists, delete the old banner image from Cloudinary
+      await cloudinary.uploader.destroy(user.userBannerImagePublicId, (error, result) => {
+        if (error) {
+          console.error('Error deleting old banner image:', error);
+        } else {
+          console.log('Old banner image deleted:', result);
+        }
+      });
+    } else {
+      console.log('No public_id found for banner image, skipping deletion.');
+    }
+
+    // Upload new banner image
     const stream = cloudinary.uploader.upload_stream(
       { folder: "flick-app-userimage" },
-     async (error, result) => {
+      async (error, result) => {
         if (error) {
-          console.error(error);
+          console.error('Error uploading new banner image:', error);
           res.status(500).json({ error: 'Internal Server Error' });
         } else {
-          console.log(result.url);
+          console.log('New banner image uploaded:', result.url);
 
-           user.userBannerImage = result.url;
-           const usersave = await user.save();
-           res.status(200).json("User Banner Image saved");
-
+          // Save new banner image URL and public_id
+          user.userBannerImage = result.url;
+          user.userBannerImagePublicId = result.public_id; // Store the new public_id for the banner image
+          await user.save();
+          
+          res.status(200).json("User Banner Image saved");
         }
       }
     );
 
     streamifier.createReadStream(req.file.buffer).pipe(stream);
   } catch (error) {
-    console.error(error);
+    console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }

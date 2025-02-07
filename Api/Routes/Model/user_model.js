@@ -5,6 +5,10 @@ const socialMediaSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+index: {
+  type: Number,
+  required: false
+},
   socialMediaType: {
     type: String,
     required: false
@@ -80,6 +84,11 @@ const userSchema = new mongoose.Schema({
   userImage: {
     type:String,
   },
+  userImagePublicId: 
+  {type:String},
+  userBannerImagePublicId:{
+    type:String
+  },
   isSHareByCatgOn:{
  type: Boolean,
     required: false
@@ -111,9 +120,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false
   },
-  mainProfileColorCode: {
+  subscriptionType: {
     type: String,
-    required: false // Set to true if it's a required field
+    required: false
+  },
+  subscriptionEndDate: {
+    type: Date, 
+    required: false
   },
  
   socialMedia: [socialMediaSchema]

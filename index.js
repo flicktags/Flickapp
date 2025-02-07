@@ -12,28 +12,23 @@ const social_media=require('./Api/Routes/social_media')
 const userImage = require('./Api/Routes/index');
 const flickCode=require('./Api/Routes/flickCodes')
 const bodyparser=require('body-parser');
-app.use(bodyparser.urlencoded({extended:false}));
+app.use(bodyparser.urlencoded({extended:false})); 
 app.use(bodyparser.json());
-app.use('/user', user); 
+app.use('/user', user);    
 app.use('/socialmedia', social_media);
 app.use('/UserImg', userImage);
 app.use('/flickCode',flickCode); 
 app.use(express.static('public'));
-app.post("/UserImg/uploadImage/:id", async (req, res) => {
+app.post("/UserImg/uploadImage/:id", async (req, res) => { 
   await handleImageUpload(req, res);
 });
 
 app.post("/UserPdf/uploadPdf/:id", async (req, res) => {
   console.log('Upload'); 
   await handlePdfUpload(req, res);
-});
+}); 
 app.post("/UserBanner/Image/:id", async (req, res) => {
   await userBannerImage(req, res);
-});
- app.use((req, res, next) => { 
-  res.status(404).json({
-    error: 'Bad Request'
-  });
 });
 app.use((req, res, next) => { 
   res.status(404).json({

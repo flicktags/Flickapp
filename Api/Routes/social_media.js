@@ -36,6 +36,7 @@ const router = express.Router();
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const streamifier = require('streamifier');
+const mongoose = require('mongoose');
 const User = require('../Routes/Model/user_model'); // Adjust the path to your user model
 
 // Cloudinary configuration
@@ -264,6 +265,57 @@ router.put('/updateDirectMode/:UserId', async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
+//social Media reordering
+router.put('/social_media/re_order/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const { order } = req.body;
+     
+    // Check if user exists
+      const user = await User.findOne({ id: userId });
+     
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
 
+    // Validate order format
+    if (!Array.isArray(order)) {
+      return res.status(400).json({ message: 'Invalid order format. It should be an array of social media IDs.' });
+    }
+    // Check if all social media IDs belong to the user
+      // Check if all social media IDs belong to the user
+      const userSocialMediaIds = user.socialMedia.map((media) => media._id.toString());
+      console.log('User Social Media IDs:', userSocialMediaIds);
+      const invalidIds = order.filter((id) => !userSocialMediaIds.includes(id.toString()));
+
+      // If there are any invalid IDs, return an error
+      if (invalidIds.length > 0) {
+        return res.status(400).json({
+          message: 'Some social media IDs do not belong to the user.',
+          invalidIds,
+        });
+      }
+
+
+      // Reorder the social media array based on the order received
+         const reorderedSocialMedia = order.map((id) => {
+           return user.socialMedia.find((media) => media._id.toString() === id.toString());
+         });
+
+         // Update the social media order in the user's document
+         user.socialMedia = reorderedSocialMedia;
+
+         // Save the updated user document
+         await user.save();
+
+         return res.status(200).json({
+           message: 'Order updated successfully',
+           modifiedCount: 1  // Since you're updating one user document
+         });
+       } catch (error) {
+         console.error('Error updating order:', error);
+         return res.status(500).json({ message: 'Internal server error', error });
+       }
+});
 
 module.exports = router;
