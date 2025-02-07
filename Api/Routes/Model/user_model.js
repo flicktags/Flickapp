@@ -128,6 +128,10 @@ const userSchema = new mongoose.Schema({
     type: Date, 
     required: false
   },
+  mainProfileColorCode: {
+    type: String,
+    required: false // Set to true if it's a required field
+  },
  
   socialMedia: [socialMediaSchema]
 });

@@ -38,6 +38,7 @@ router.get('/:id', async (req, res, next) => {
         TagActivated:user.TagActivated,
         isSHareByCatgOn:user.isSHareByCatgOn,
         ColorCode:user.ColorCode,
+        mainProfileColorCode:user.mainProfileColorCode,
         userBannerImage:user.userBannerImage,
         subscriptionType:user.subscriptionType,  subscriptionEndDate:user.subscriptionEndDate,
         isChoosedCatgBtnOptions:user.isChoosedCatgBtnOptions,
@@ -76,6 +77,7 @@ router.put('/', async (req, res, next) => {
       subscriptionType: "pro", // Set the subscription type to "trial"
       subscriptionEndDate: oneMonthFromNow, // Set the free trial end date to one month from now
       ColorCode: null,
+      mainProfileColorCode:null,
       userBannerImage: null, 
       socialMedia: req.body.socialMedia || []
     });
