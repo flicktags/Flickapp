@@ -132,6 +132,24 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false // Set to true if it's a required field
   },
+  profileBGImage: {
+    type: String,
+    required: false
+  },
+  profileStartColor: {
+    type: String,
+    required: false
+  },
+  profileEndColor: {
+    type: String,
+    required: false
+  },
+  profileTextColor: {
+    type: String,
+    required: false
+  },
+
+  
  
   socialMedia: [socialMediaSchema]
 });
