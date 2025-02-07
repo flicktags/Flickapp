@@ -106,9 +106,14 @@ const userSchema = new mongoose.Schema({
   ColorCode:{
     type: String,
     required: false
-  },userBannerImage:{
+  },
+  userBannerImage:{
     type: String,
     required: false
+  },
+  mainProfileColorCode: {
+    type: String,
+    required: false // Set to true if it's a required field
   },
  
   socialMedia: [socialMediaSchema]

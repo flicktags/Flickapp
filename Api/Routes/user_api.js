@@ -22,7 +22,7 @@ router.get('/:id', async (req, res, next) => {
     // Send user details, including social media information
     return res.status(200).json({
       data: {
-        
+        id:user._id,
         name: user.name,
         email: user.email,
         phone: user.phone,
@@ -38,6 +38,7 @@ router.get('/:id', async (req, res, next) => {
         TagActivated:user.TagActivated,
         isSHareByCatgOn:user.isSHareByCatgOn,
         ColorCode:user.ColorCode,
+        mainProfileColorCode:user.mainProfileColorCode,
         userBannerImage:user.userBannerImage, 
         isChoosedCatgBtnOptions:user.isChoosedCatgBtnOptions,
         selectedCatgBtnOptionValue:user.selectedCatgBtnOptionValue,
@@ -55,8 +56,6 @@ router.get('/:id', async (req, res, next) => {
 
 
 router.put('/', async (req, res, next) => {
-
-
   try {
     const newUser = new User({
       id:req.body.id,
@@ -76,6 +75,7 @@ router.put('/', async (req, res, next) => {
       isChoosedCatgBtnOptions:true,
       subscriptionType:"pro",
       ColorCode:null,
+      mainProfileColorCode:null,
       userBannerImage:null, 
       socialMedia: req.body.socialMedia || []
     });
@@ -437,7 +437,7 @@ router.delete('/user-info/leadcapture-delete/:id', async (req, res) => {
 router.post('/color-codes/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
-    const { colorCode } = req.body;  // Extract colorCode from the request body
+    const { colorCode, mainProfileColorCode } = req.body;  // Extract colorCode from the request body
 
     // Find the user document based on the provided user ID
     const user = await User.findOne({ id: userId });
@@ -447,6 +447,8 @@ router.post('/color-codes/:userId', async (req, res) => {
     }
 
     user.ColorCode = colorCode;
+    user.mainProfileColorCode = mainProfileColorCode || null;  // Use null if mainProfileColorCode is not provided
+
     await user.save();
 
     res.status(200).json({ message: 'Color code saved successfully' });
