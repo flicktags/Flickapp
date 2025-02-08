@@ -44,6 +44,7 @@ router.get('/:id', async (req, res, next) => {
         profileStartColor: user?.profileStartColor || null,
         profileEndColor: user?.profileEndColor || null,
         profileTextColor: user?.profileTextColor || null,
+        profileContainerColor: user?.profileContainerColor || null,
         subscriptionType:user.subscriptionType,  subscriptionEndDate:user.subscriptionEndDate,
         isChoosedCatgBtnOptions:user.isChoosedCatgBtnOptions,
         selectedCatgBtnOptionValue:user.selectedCatgBtnOptionValue,
@@ -81,12 +82,12 @@ router.put('/', async (req, res, next) => {
       subscriptionType: "pro", // Set the subscription type to "trial"
       subscriptionEndDate: oneMonthFromNow, // Set the free trial end date to one month from now
       ColorCode: null,
-      mainProfileColorCode:null,
-      profileBGImage:null,
-      profileStartColor:null,
-      profileEndColor:null,
-      profileTextColor:null,
-      mainProfileColorCode:null,
+      mainProfileColorCode: null,
+      profileBGImage: null,
+      profileStartColor: null,
+      profileEndColor: null,
+      profileTextColor: null,
+      profileContainerColor: null,
       userBannerImage: null, 
       socialMedia: req.body.socialMedia || []
     });

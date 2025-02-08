@@ -148,6 +148,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+  profileContainerColor: {
+    type: String,
+    required: false
+  },
 
   
  
