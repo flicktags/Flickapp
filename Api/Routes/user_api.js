@@ -492,7 +492,7 @@ router.delete('/user-info/leadcapture-delete/:id', async (req, res) => {
 router.post('/color-codes/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
-    const { colorCode, mainProfileColorCode } = req.body;  // Extract colorCode from the request body
+    const { colorCode, mainProfileColorCode, profileStartColor, profileEndColor } = req.body;  // Extract colorCode from the request body
 
     // Find the user document based on the provided user ID
     const user = await User.findOne({ id: userId });
@@ -502,7 +502,9 @@ router.post('/color-codes/:userId', async (req, res) => {
     }
 
     user.ColorCode = colorCode;
-    user.mainProfileColorCode = mainProfileColorCode || null;  // Use null if mainProfileColorCode is not provided
+    user.mainProfileColorCode = mainProfileColorCode || null;
+    user.profileStartColor = profileStartColor || null;
+    user.profileEndColor = profileEndColor || null;
 
     await user.save();
 
