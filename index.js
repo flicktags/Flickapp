@@ -6,6 +6,8 @@ const cors=require('cors');
 app.use(cors());
 const port = 3000;
 const { handleImageUpload, userBannerImage } = require("./Api/Routes/imageupload");
+const { handleProfileImageUpload, userProfileBackgroundImage } = require("./Api/Routes/imageupload");
+
 const {handlePdfUpload} = require("./Api/Routes/user_pdf_upload")
 const user=require('./Api/Routes/user_api')
 const social_media=require('./Api/Routes/social_media')
@@ -29,6 +31,9 @@ app.post("/UserPdf/uploadPdf/:id", async (req, res) => {
 }); 
 app.post("/UserBanner/Image/:id", async (req, res) => {
   await userBannerImage(req, res);
+});
+app.post("/UserProfileBackground/Image/:id", async (req, res) => {
+  await userProfileBackgroundImage(req, res);
 });
 app.use((req, res, next) => { 
   res.status(404).json({

@@ -127,5 +127,111 @@ async function userBannerImage(req, res) {
   }
 }
 
-module.exports = { runMiddleware, handleImageUpload,userBannerImage };
+async function handleProfileImageUpload(req, res) {
+  try {
+    await runMiddleware(req, res, upload);
+
+    const userId = req.params.id;
+    const user = await User.findOne({ id: userId });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Check if the user has an existing image and the public_id is available
+    if (user.userProfileImagePublicId) {
+      // If public_id exists, delete the old image from Cloudinary
+      await cloudinary.uploader.destroy(user.userProfileImagePublicId, (error, result) => {
+        if (error) {
+          console.error('Error deleting old image:', error);
+        } else {
+          console.log('Old image deleted:', result);
+        }
+      });
+    } else {
+      console.log('No public_id found, skipping deletion of old image.');
+    }
+
+    // Upload new image
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: "flick-user-profile-background" },
+      async (error, result) => {
+        if (error) {
+          console.error('Error uploading new image:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+          console.log('New image uploaded:', result.url);
+
+          // Save new image URL and public_id
+          user.profileBGImage = result.url;
+          user.userProfileImagePublicId = result.public_id; // Store the new public_id
+          await user.save();
+          
+          res.status(200).json("Image saved");
+        }
+      }
+    );
+
+    streamifier.createReadStream(req.file.buffer).pipe(stream);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+async function userProfileBackgroundImage(req, res) {
+  try {
+    await runMiddleware(req, res, upload);
+
+    const userId = req.params.id;
+    const user = await User.findOne({ id: userId });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Check if the user has an existing banner image and the public_id is available
+    if (user.userProfileBackgroundImagePublicId) {
+      // If public_id exists, delete the old banner image from Cloudinary
+      await cloudinary.uploader.destroy(user.userProfileBackgroundImagePublicId, (error, result) => {
+        if (error) {
+          console.error('Error deleting old banner image:', error);
+        } else {
+          console.log('Old banner image deleted:', result);
+        }
+      });
+    } else {
+      console.log('No public_id found for banner image, skipping deletion.');
+    }
+
+    // Upload new banner image
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: "flick-user-profile-background" },
+      async (error, result) => {
+        if (error) {
+          console.error('Error uploading new banner image:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+          console.log('New Profile Background image uploaded:', result.url);
+
+          // Save new banner image URL and public_id
+          user.profileBGImage = result.url;
+          user.userProfileBackgroundImagePublicId = result.public_id; // Store the new public_id for the banner image
+          await user.save();
+          
+          res.status(200).json("User Profile Background Image saved");
+        }
+      }
+    );
+
+    streamifier.createReadStream(req.file.buffer).pipe(stream);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+
+
+module.exports = { runMiddleware, handleImageUpload,userBannerImage, handleProfileImageUpload, userProfileBackgroundImage };
 

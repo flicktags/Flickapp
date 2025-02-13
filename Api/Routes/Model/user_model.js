@@ -89,6 +89,11 @@ const userSchema = new mongoose.Schema({
   userBannerImagePublicId:{
     type:String
   },
+  userProfileImagePublicId: 
+  {type:String},
+  userProfileBackgroundImagePublicId:{
+    type:String
+  },
   isSHareByCatgOn:{
  type: Boolean,
     required: false
@@ -120,6 +125,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+  profileBGImage:{
+    type: String,
+    required: false
+  },
   subscriptionType: {
     type: String,
     required: false
@@ -132,10 +141,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false // Set to true if it's a required field
   },
-  profileBGImage: {
-    type: String,
-    required: false
-  },
+  // profileBGImage: {
+  //   type: String,
+  //   required: false
+  // },
   profileStartColor: {
     type: String,
     required: false
@@ -153,8 +162,6 @@ const userSchema = new mongoose.Schema({
     required: false
   },
 
-  
- 
   socialMedia: [socialMediaSchema]
 });
 
