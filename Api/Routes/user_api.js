@@ -193,11 +193,16 @@ router.put('/update/:id', async (req, res, next) => {
     if (req.body.hasOwnProperty('isActive')) {
       user.isActive = req.body.isActive;
     }
+
     if (req.body.hasOwnProperty('isLost')) {
       user.isLost = req.body.isLost;
     }
     if (req.body.hasOwnProperty('lostMassege')) {
       user.lostMassege = req.body.lostMassege;
+    }
+
+    if (req.body.hasOwnProperty('profileBGImage')) {
+      user.profileBGImage = req.body.profileBGImage;
     }
     // Save the updated user
     const updatedUser = await user.save();
