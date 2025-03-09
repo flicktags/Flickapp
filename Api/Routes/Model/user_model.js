@@ -161,6 +161,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+  isExchangeContactEnabled: {
+    type: Boolean,
+    required: false
+  },
 
   socialMedia: [socialMediaSchema]
 });

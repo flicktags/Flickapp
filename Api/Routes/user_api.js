@@ -45,6 +45,7 @@ router.get('/:id', async (req, res, next) => {
         profileEndColor: user?.profileEndColor || null,
         profileTextColor: user?.profileTextColor || null,
         profileContainerColor: user?.profileContainerColor || null,
+        isExchangeContactEnabled: user?.isExchangeContactEnabled,
         subscriptionType:user.subscriptionType,  subscriptionEndDate:user.subscriptionEndDate,
         isChoosedCatgBtnOptions:user.isChoosedCatgBtnOptions,
         selectedCatgBtnOptionValue:user.selectedCatgBtnOptionValue,
@@ -89,6 +90,7 @@ router.put('/', async (req, res, next) => {
       profileTextColor: null,
       profileContainerColor: null,
       userBannerImage: null, 
+      isExchangeContactEnabled: true,
       socialMedia: req.body.socialMedia || []
     });
 
@@ -203,6 +205,9 @@ router.put('/update/:id', async (req, res, next) => {
 
     if (req.body.hasOwnProperty('profileBGImage')) {
       user.profileBGImage = req.body.profileBGImage;
+    }
+    if (req.body.hasOwnProperty('isExchangeContactEnabled')) {
+      user.isExchangeContactEnabled = req.body.isExchangeContactEnabled;
     }
     // Save the updated user
     const updatedUser = await user.save();
