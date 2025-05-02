@@ -100,8 +100,10 @@ router.put('/:id', upload.single('file'), async (req, res) => {
     // Create a new social media account
     const newSocialMedia = {
       socialMediaName: req.body.socialMediaName,
+      socialMediaNameArabic: req.body.socialMediaNameArabic,
       socialMediaType: req.body.socialMediaType,
       socialMediaLink: req.body.socialMediaLink,
+      socialMediaCategory: req.body.socialMediaCategory,
       category: req.body.category,
       isActive: true,
       userPdf: pdfUrl,
