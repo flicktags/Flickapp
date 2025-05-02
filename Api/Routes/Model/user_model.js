@@ -5,6 +5,10 @@ const socialMediaSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+  socialMediaNameArabic: {
+    type: String,
+    required: false
+  },
 index: {
   type: Number,
   required: false
@@ -165,6 +169,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     required: false
   },
+  // profileExecutionCount: {
+  //   type: Number,
+  //   required: false
+  // },
 
   socialMedia: [socialMediaSchema]
 });
