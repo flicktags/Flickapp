@@ -182,6 +182,9 @@ router.delete('/delete/:id/:socialMediaId', async (req, res, next) => {
     if (req.body.hasOwnProperty('socialMediaName')) {
       socialMedia.socialMediaName = req.body.socialMediaName;
     }
+    if (req.body.hasOwnProperty('socialMediaNameArabic')) {
+      socialMedia.socialMediaNameArabic = req.body.socialMediaNameArabic;
+    }
 
     if (req.body.hasOwnProperty('socialMediaType')) {
       socialMedia.socialMediaType = req.body.socialMediaType;
