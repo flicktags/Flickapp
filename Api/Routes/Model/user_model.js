@@ -48,6 +48,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+  nameArabic: {
+    type: String,
+    required: false
+  },
   email: {
     type: String,
     required: false,
@@ -61,11 +65,19 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+  professionArabic: {
+    type: String,
+    required: false
+  },
   subscriptionType:{
     type: String,
     required: false
   },
   organization: {
+    type: String,
+    required: false
+  },
+  organizationArabic: {
     type: String,
     required: false
   },

@@ -24,12 +24,15 @@ router.get('/:id', async (req, res, next) => {
       data: {
         id:user._id,
         name: user.name,
+        nameArabic: user.nameArabic || null,
         email: user.email,
         phone: user.phone,
         registrationDate:user.registrationDate,
         subscriptionType:user.subscriptionType,
         profession: user.profession,
+        professionArabic: user.professionArabic || null,
         organization: user.organization,
+        organizationArabic: user.organizationArabic || null,
         userImage: user.userImage,
         isActive: user.isActive,
         isEnabledLostMode:user.isLost,
@@ -51,6 +54,7 @@ router.get('/:id', async (req, res, next) => {
         selectedCatgBtnOptionValue:user.selectedCatgBtnOptionValue,
         deviceToken:user.deviceToken||[],
         socialMedia: user.socialMedia || [],
+        // profileExecutionCount: user.profileExecutionCount || null,
        
       }
     });
@@ -69,10 +73,13 @@ router.put('/', async (req, res, next) => {
       id: req.body.id,
       registrationDate: new Date(),
       name: req.body.name,
+      nameArabic: req.body.nameArabic,
       email: req.body.email,
       phone: req.body.phone,
       profession: req.body.profession,
+      professionArabic: req.body.professionArabic,
       organization: req.body.organization,
+      organizationArabic: req.body.organizationArabic,
       userImage: req.body.userImage,
       isActive: req.body.isActive,
       TagActivated: false,
@@ -91,6 +98,7 @@ router.put('/', async (req, res, next) => {
       profileContainerColor: null,
       userBannerImage: null, 
       isExchangeContactEnabled: true,
+      // profileExecutionCount: null,
       socialMedia: req.body.socialMedia || []
     });
 
@@ -171,6 +179,9 @@ router.put('/update/:id', async (req, res, next) => {
     if (req.body.hasOwnProperty('name')) {
       user.name = req.body.name;
     }
+    if (req.body.hasOwnProperty('nameArabic')) {
+      user.nameArabic = req.body.namearabic;
+    }
 
     if (req.body.hasOwnProperty('email')) { 
       user.email = req.body.email;
@@ -184,8 +195,16 @@ router.put('/update/:id', async (req, res, next) => {
       user.profession = req.body.profession;
     }
 
+    if (req.body.hasOwnProperty('professionArabic')) {
+      user.professionArabic = req.body.professionArabic;
+    }
+
     if (req.body.hasOwnProperty('organization')) {
       user.organization = req.body.organization;
+    }
+
+    if (req.body.hasOwnProperty('organizationArabic')) {
+      user.organizationArabic = req.body.organizationArabic;
     }
 
     if (req.body.hasOwnProperty('userImage')) {
@@ -209,6 +228,9 @@ router.put('/update/:id', async (req, res, next) => {
     if (req.body.hasOwnProperty('isExchangeContactEnabled')) {
       user.isExchangeContactEnabled = req.body.isExchangeContactEnabled;
     }
+    // if (req.body.hasOwnProperty('profileExecutionCount')) {
+    //   user.profileExecutionCount = req.body.profileExecutionCount;
+    // }
     // Save the updated user
     const updatedUser = await user.save();
 
