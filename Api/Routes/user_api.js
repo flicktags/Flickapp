@@ -180,7 +180,7 @@ router.put('/update/:id', async (req, res, next) => {
       user.name = req.body.name;
     }
     if (req.body.hasOwnProperty('nameArabic')) {
-      user.nameArabic = req.body.namearabic;
+      user.nameArabic = req.body.nameArabic;
     }
 
     if (req.body.hasOwnProperty('email')) { 
