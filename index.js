@@ -5,7 +5,7 @@ const app = express();
 const cors=require('cors');
 app.use(cors());
 const port = 3000;
-const { handleImageUpload, userBannerImage } = require("./Api/Routes/imageupload");
+const { handleImageUpload, handleSMCustomLogoUpload, userBannerImage } = require("./Api/Routes/imageupload");
 const { handleProfileImageUpload, userProfileBackgroundImage } = require("./Api/Routes/imageupload");
 
 const {handlePdfUpload} = require("./Api/Routes/user_pdf_upload")
@@ -24,7 +24,6 @@ app.use(express.static('public'));
 app.post("/UserImg/uploadImage/:id", async (req, res) => { 
   await handleImageUpload(req, res);
 });
-
 app.post("/socialMediaLogo/upload", async (req, res) => {
   await handleSMCustomLogoUpload(req, res);
 });
