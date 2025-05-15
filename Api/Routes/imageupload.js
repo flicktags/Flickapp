@@ -75,6 +75,51 @@ async function handleImageUpload(req, res) {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }
+
+async function handleSMCustomLogoUpload(req, res) {
+  try {
+    // 1. Get userId from JSON body
+    const { userId } = req.body;
+    if (!userId) return res.status(400).json({ error: "userId required" });
+
+    // 2. Validate user exists (but don't store anything)
+    const userExists = await User.exists({ id: userId });
+    if (!userExists) return res.status(404).json({ error: "User not found" });
+
+    // 3. Process file upload
+    await runMiddleware(req, res, upload);
+    if (!req.file) return res.status(400).json({ error: "No file provided" });
+
+    // 4. Upload to Cloudinary
+    const uploadResult = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { 
+          folder: "flick-user-socialmedia-customlogo",
+        },
+        (error, result) => error ? reject(error) : resolve(result)
+      );
+      streamifier.createReadStream(req.file.buffer).pipe(stream);
+    });
+
+    // 5. Return success
+    res.status(200).json({
+      success: true,
+      url: uploadResult.secure_url,
+      public_id: uploadResult.public_id
+    });
+
+  } catch (error) {
+    console.error('Upload failed:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Upload failed',
+      details: error.message 
+    });
+  }
+}
+
+
+
 async function userBannerImage(req, res) {
   try {
     await runMiddleware(req, res, upload);
@@ -233,5 +278,5 @@ async function userProfileBackgroundImage(req, res) {
 
 
 
-module.exports = { runMiddleware, handleImageUpload,userBannerImage, handleProfileImageUpload, userProfileBackgroundImage };
+module.exports = { runMiddleware, handleImageUpload, handleSMCustomLogoUpload, userBannerImage, handleProfileImageUpload, userProfileBackgroundImage };
 

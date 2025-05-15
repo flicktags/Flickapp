@@ -25,6 +25,9 @@ app.post("/UserImg/uploadImage/:id", async (req, res) => {
   await handleImageUpload(req, res);
 });
 
+app.post("/socialMediaLogo/upload", async (req, res) => {
+  await handleSMCustomLogoUpload(req, res);
+});
 app.post("/UserPdf/uploadPdf/:id", async (req, res) => {
   console.log('Upload'); 
   await handlePdfUpload(req, res);
