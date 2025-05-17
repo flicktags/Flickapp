@@ -103,6 +103,7 @@ router.put('/:id', upload.single('file'), async (req, res) => {
       socialMediaNameArabic: req.body.socialMediaNameArabic,
       socialMediaType: req.body.socialMediaType,
       socialMediaLink: req.body.socialMediaLink,
+      socialMediaCustomLogo: req.body.socialMediaCustomLogo,
       socialMediaCategory: req.body.socialMediaCategory,
       category: req.body.category,
       isActive: true,

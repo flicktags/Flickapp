@@ -9,10 +9,10 @@ const socialMediaSchema = new mongoose.Schema({
     type: String,
     required: false
   },
-index: {
+  index: {
   type: Number,
   required: false
-},
+  },
   socialMediaType: {
     type: String,
     required: false
@@ -20,6 +20,10 @@ index: {
   socialMediaLink: {
     type: String,
     required: false
+  },
+  socialMediaCustomLogo: {
+    type: String,
+    required: false,
   },
   category: {
     type: String,

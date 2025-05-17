@@ -53,9 +53,7 @@ router.get('/:id', async (req, res, next) => {
         isChoosedCatgBtnOptions:user.isChoosedCatgBtnOptions,
         selectedCatgBtnOptionValue:user.selectedCatgBtnOptionValue,
         deviceToken:user.deviceToken||[],
-        socialMedia: user.socialMedia || [],
-        // profileExecutionCount: user.profileExecutionCount || null,
-       
+        socialMedia: user.socialMedia || [],       
       }
     });
     
