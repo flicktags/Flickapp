@@ -104,6 +104,7 @@ router.put('/:id', upload.single('file'), async (req, res) => {
       socialMediaType: req.body.socialMediaType,
       socialMediaLink: req.body.socialMediaLink,
       socialMediaCustomLogo: req.body.socialMediaCustomLogo,
+      socialMediaCustomLogoPublicId: req.body.socialMediaCustomLogoPublicId,
       socialMediaCategory: req.body.socialMediaCategory,
       category: req.body.category,
       isActive: true,
@@ -123,43 +124,211 @@ router.put('/:id', upload.single('file'), async (req, res) => {
   }
 });
 
+router.delete('/delete/:userId/:socialMediaId', async (req, res) => {
+  const { userId, socialMediaId } = req.params;
 
+  try {
+    const user = await User.findOne({ id: userId });
+    if (!user) return res.status(404).json({ error: 'User not found' });
 
+    const socialMediaEntry = user.socialMedia.id(socialMediaId);
+    if (!socialMediaEntry) return res.status(404).json({ error: 'Social media not found' });
 
-
-router.delete('/delete/:id/:socialMediaId', async (req, res, next) => {
-    const userId = req.params.id;
-    const socialMediaId = req.params.socialMediaId;
-  
-    try {
-        const user = await User.findOne({ id: userId });
-
-        if (!user) {
-          return res.status(404).json({ error: 'User not found' });
-        }
-    
-        // Find the index of the social media object by socialMediaId
-        const socialMediaIndex = user.socialMedia.findIndex(
-          (socialMedia) => socialMedia._id.toString() === socialMediaId
-        );
-    
-        if (socialMediaIndex === -1) {
-          return res.status(404).json({ error: 'Social media account not found' });
-        }
-    
-  
-      // Remove the social media object
-      user.socialMedia.splice(socialMediaIndex, 1);
-  
-      // Save the updated user
-      const updatedUser = await user.save();
-  
-      return res.json({ data: updatedUser });
-    } catch (error) {
-      console.error('Error deleting social media account for user:', error);
-      return res.status(500).json({ error: 'Internal Server Error' });
+    // Delete from Cloudinary
+    if (socialMediaEntry.socialMediaCustomLogoPublicId) {
+      await cloudinary.uploader.destroy(
+        socialMediaEntry.socialMediaCustomLogoPublicId,
+        { invalidate: true }
+      );
     }
-  });
+
+    // Delete from database
+    user.socialMedia.pull(socialMediaId);
+    await user.save();
+
+    return res.json({ success: true });
+  } catch (error) {
+    console.error('Deletion error:', error);
+    return res.status(500).json({ error: 'Deletion failed' });
+  }
+});
+
+
+// router.delete('/delete/:id/:socialMediaId', async (req, res) => {
+//   const { id: userId, socialMediaId } = req.params;
+
+//   try {
+//     const user = await User.findOne({ id: userId });
+//     if (!user) return res.status(404).json({ error: 'User not found' });
+
+//     const socialMediaEntry = user.socialMedia.id(socialMediaId);
+//     if (!socialMediaEntry) return res.status(404).json({ error: 'Social media not found' });
+
+//     // Cloudinary Deletion
+//     if (socialMediaEntry.socialMediaLogo?.publicId) {
+//       const fullPublicId = socialMediaEntry.socialMediaLogo.publicId;
+//       const publicId = fullPublicId.split('/').pop().split('.')[0];
+      
+//       console.log(`Attempting to delete: ${publicId} (from ${fullPublicId})`);
+      
+//       await cloudinary.uploader.destroy(publicId, { invalidate: true })
+//         .then(result => console.log('Deletion result:', result))
+//         .catch(err => console.error('Cloudinary error:', err));
+//     }
+
+//     // Database Deletion
+//     user.socialMedia.pull(socialMediaId);
+//     await user.save();
+
+//     return res.json({ success: true });
+//   } catch (error) {
+//     console.error('Server error:', error);
+//     return res.status(500).json({ error: 'Deletion failed' });
+//   }
+// });
+
+// router.delete('/delete/:id/:socialMediaId', async (req, res) => {
+//   const { id: userId, socialMediaId } = req.params;
+
+//   try {
+//     // 1. Find user
+//     const user = await User.findOne({ id: userId });
+//     if (!user) return res.status(404).json({ error: 'User not found' });
+
+//     // 2. Find the social media entry
+//     const socialMediaEntry = user.socialMedia.id(socialMediaId);
+//     if (!socialMediaEntry) {
+//       return res.status(404).json({ error: 'Social media account not found' });
+//     }
+
+//     // 3. Check for logo and delete from Cloudinary
+//     if (socialMediaEntry.socialMediaLogo?.publicId) {
+//       // Extract JUST the public_id without folder path
+//       const publicId = socialMediaEntry.socialMediaLogo.publicId
+//         .split('/')
+//         .pop() // Gets "emar6ha1rkgbnfkxhu" from "socialMediaCustomLogo-folder/emar6ha1rkgbnfkxhu"
+//         .split('.')[0]; // Removes file extension if present
+    
+//       console.log('Extracted publicId:', publicId);
+      
+//       await cloudinary.uploader.destroy(publicId, {
+//         invalidate: true // Optional: CDN cache invalidation
+//       });
+//     }
+
+//     if (socialMediaEntry.publicId) {
+//       // If public_id exists, delete the old banner image from Cloudinary
+//       await cloudinary.uploader.destroy(socialMediaEntry.publicId, (error, result) => {
+//         if (error) {
+//           console.error('Error deleting old banner image:', error);
+//         } else {
+//           console.log('Old banner image deleted:', result);
+//         }
+//       });
+//     } else {
+//       console.log('No public_id found for banner image, skipping deletion.');
+//     }
+
+//     // 4. Remove from database
+//     user.socialMedia.pull(socialMediaId);
+//     await user.save();
+
+//     return res.json({ success: true });
+
+//   } catch (error) {
+//     console.error('Deletion error:', error);
+//     return res.status(500).json({ 
+//       error: 'Internal Server Error',
+//       details: error.message 
+//     });
+//   }
+// });
+
+// router.delete('/delete/:id/:socialMediaId', async (req, res) => {
+//   const { id: userId, socialMediaId } = req.params;
+
+//   try {
+//     // 1. Find user
+//     const user = await User.findOne({ id: userId });
+//     if (!user) return res.status(404).json({ error: 'User not found' });
+
+//     // 2. Find the social media index
+//     const socialMediaIndex = user.socialMedia.findIndex(
+//       (socialMedia) => socialMedia._id.toString() === socialMediaId
+//     );
+    
+//     if (socialMediaIndex === -1) {
+//       return res.status(404).json({ error: 'Social media account not found' });
+//     }
+
+//     // 3. Check for logo and delete from Cloudinary (using your existing config)
+//     const socialMediaEntry = user.socialMedia[socialMediaIndex];
+//     if (socialMediaEntry.socialMediaCustomLogo) {
+//       try {
+//         const publicId = socialMediaEntry.socialMediaCustomLogo
+//           .split('/')
+//           .pop()
+//           .split('.')[0]; // Extract public_id from URL
+        
+//         await cloudinary.uploader.destroy(publicId);
+//         console.log(`Deleted Cloudinary image: ${publicId}`);
+//       } catch (cloudinaryError) {
+//         console.warn('Cloudinary deletion failed (proceeding anyway):', cloudinaryError);
+//       }
+//     }
+
+//     // 4. Remove from database
+//     user.socialMedia.splice(socialMediaIndex, 1);
+//     const updatedUser = await user.save();
+
+//     return res.json({ 
+//       success: true,
+//       data: updatedUser 
+//     });
+
+//   } catch (error) {
+//     console.error('Deletion error:', error);
+//     return res.status(500).json({ 
+//       error: 'Internal Server Error',
+//       details: error.message 
+//     });
+//   }
+// });
+
+
+// router.delete('/delete/:id/:socialMediaId', async (req, res, next) => {
+//     const userId = req.params.id;
+//     const socialMediaId = req.params.socialMediaId;
+  
+//     try {
+//         const user = await User.findOne({ id: userId });
+
+//         if (!user) {
+//           return res.status(404).json({ error: 'User not found' });
+//         }
+    
+//         // Find the index of the social media object by socialMediaId
+//         const socialMediaIndex = user.socialMedia.findIndex(
+//           (socialMedia) => socialMedia._id.toString() === socialMediaId
+//         );
+    
+//         if (socialMediaIndex === -1) {
+//           return res.status(404).json({ error: 'Social media account not found' });
+//         }
+    
+  
+//       // Remove the social media object
+//       user.socialMedia.splice(socialMediaIndex, 1);
+  
+//       // Save the updated user
+//       const updatedUser = await user.save();
+  
+//       return res.json({ data: updatedUser });
+//     } catch (error) {
+//       console.error('Error deleting social media account for user:', error);
+//       return res.status(500).json({ error: 'Internal Server Error' });
+//     }
+//   });
 
   router.put('/update/:id/:socialMediaId', async (req, res, next) => {
   const userId = req.params.id;

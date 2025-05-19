@@ -25,6 +25,11 @@ const socialMediaSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  socialMediaCustomLogoPublicId: {
+    type: String,
+    required: false,
+  },
+  
   category: {
     type: String,
     required: false
