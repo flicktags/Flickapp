@@ -330,6 +330,68 @@ router.delete('/delete/:userId/:socialMediaId', async (req, res) => {
 //     }
 //   });
 
+// Add this to your backend API routes
+// New dedicated endpoint for logo replacement
+// Define the route in your router file:
+router.put('/update-social-media-logo/:id', upload.single('file'), async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { socialMediaId } = req.body;
+    const file = req.file;
+
+    console.log(`Logo update request for user:${userId} socialMedia:${socialMediaId}`);
+
+    if (!file) {
+      return res.status(400).json({ error: 'No image file provided' });
+    }
+
+    const user = await User.findOne({ id: userId });
+    if (!user) {
+      console.error('User not found');
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const socialMedia = user.socialMedia.id(socialMediaId);
+    if (!socialMedia) {
+      console.error('Social media entry not found');
+      return res.status(404).json({ error: 'Social media entry not found' });
+    }
+
+    if (socialMedia.socialMediaCustomLogoPublicId) {
+      await cloudinary.uploader.destroy(socialMedia.socialMediaCustomLogoPublicId);
+    }
+
+    const result = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: "flick-user-socialmedia-customlogo",
+          transformation: { width: 512, height: 512, crop: "limit" }
+        },
+        (error, result) => error ? reject(error) : resolve(result)
+      );
+
+      streamifier.createReadStream(file.buffer).pipe(uploadStream);
+    });
+
+    socialMedia.socialMediaCustomLogo = result.secure_url;
+    socialMedia.socialMediaCustomLogoPublicId = result.public_id;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      url: result.secure_url,
+      publicId: result.public_id
+    });
+
+  } catch (error) {
+    console.error('Update error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+
+
   router.put('/update/:id/:socialMediaId', async (req, res, next) => {
   const userId = req.params.id;
   const socialmediaId = req.params.socialMediaId;
