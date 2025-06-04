@@ -190,6 +190,13 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     required: false
   },
+  isMultiLangActivated:{
+    type: Boolean,
+    required: false,
+    default: false
+  },
+  
+
   // profileExecutionCount: {
   //   type: Number,
   //   required: false

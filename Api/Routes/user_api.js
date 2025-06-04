@@ -39,6 +39,7 @@ router.get('/:id', async (req, res, next) => {
         lostMassege:user.lostMassege,
         directMode:user.userDirectMode,
         TagActivated:user.TagActivated,
+        isMultiLangActivated:user.isMultiLangActivated,
         isSHareByCatgOn:user.isSHareByCatgOn,
         ColorCode:user.ColorCode,
         mainProfileColorCode:user.mainProfileColorCode,
@@ -81,12 +82,13 @@ router.put('/', async (req, res, next) => {
       userImage: req.body.userImage,
       isActive: req.body.isActive,
       TagActivated: false,
+      isMultiLangActivated: false,
       isLost: req.body.isLost,
       isSHareByCatgOn: false,
       isChoosedCatgBtnOptions: true,
       lostMassege: req.body.lostMassege,
-      subscriptionType: "pro", // Set the subscription type to "trial"
-      subscriptionEndDate: oneMonthFromNow, // Set the free trial end date to one month from now
+      subscriptionType: "pro",
+      subscriptionEndDate: oneMonthFromNow,
       ColorCode: null,
       mainProfileColorCode: null,
       profileBGImage: null,
@@ -96,7 +98,6 @@ router.put('/', async (req, res, next) => {
       profileContainerColor: null,
       userBannerImage: null, 
       isExchangeContactEnabled: true,
-      // profileExecutionCount: null,
       socialMedia: req.body.socialMedia || []
     });
 
@@ -402,6 +403,79 @@ console.log(TagActivated)
   } catch (error) {
     console.error('Error updating user Purchased category:', error);
     return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// router.post('/MultiLangActivated/:userId', async (req, res) => {
+//   const { userId } = req.params;
+//   const { MultiLangActivated } = req.body;
+// console.log(MultiLangActivated)
+//   try {
+//     // Find the user by ID
+//     const user = await User.findOne({ id: userId });
+
+//     if (!user) {
+//       return res.status(404).json({ error: 'User not found' });
+//     }
+
+//     // Update the userSharebyGategorey field
+//     user.MultiLangActivated = MultiLangActivated;
+
+//     // Save the updated user object
+//     await user.save();
+
+//     return res.status(200).json({ message: 'Multi Language has been enabled successfully' });
+//   } catch (error) {
+//     console.error('Error updating user Purchased category:', error);
+//     return res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
+
+router.post('/MultiLangActivated/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const { isMultiLangActivated } = req.body;
+  
+  console.log(`Setting MultiLangActivated to ${isMultiLangActivated} for user ${userId}`);
+
+  try {
+    // Find the user by ID
+    const user = await User.findOne({ id: userId });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Initialize field if it doesn't exist
+    if (user.isMultiLangActivated === undefined) {
+      console.log('MultiLangActivated field not found - initializing');
+      user.isMultiLangActivated = false; // Default value
+    }
+
+    // Convert input to boolean if needed
+    const newValue = typeof isMultiLangActivated === 'boolean' 
+      ? isMultiLangActivated 
+      : isMultiLangActivated === 'true';
+
+    // Update the field
+    user.isMultiLangActivated = newValue;
+
+    // Save the updated user
+    await user.save();
+
+    console.log(`Successfully set MultiLangActivated to ${user.isMultiLangActivated} for user ${userId}`);
+    
+    return res.status(200).json({ 
+      success: true,
+      message: 'Multi Language status updated successfully',
+      isMultiLangActivated: user.isMultiLangActivated
+    });
+  } catch (error) {
+    console.error('Error updating Multi Language status:', error);
+    return res.status(500).json({ 
+      success: false,
+      error: 'Internal server error',
+      details: error.message 
+    });
   }
 });
 
