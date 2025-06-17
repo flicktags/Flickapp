@@ -195,7 +195,14 @@ const userSchema = new mongoose.Schema({
     required: false,
     default: false
   },
-  
+  exchangeContactNameEnglish: {
+    type: String,
+    required: false
+  },
+  exchangeContactNameArabic: {
+    type: String,
+    required: false
+  },
 
   // profileExecutionCount: {
   //   type: Number,
