@@ -55,6 +55,7 @@ router.get('/:id', async (req, res, next) => {
         selectedCatgBtnOptionValue:user.selectedCatgBtnOptionValue,
         exchangeContactNameEnglish:user.exchangeContactNameEnglish,
         exchangeContactNameArabic:user.exchangeContactNameArabic,
+        isContactCardActivated:user.isContactCardActivated,
         deviceToken:user.deviceToken||[],
         socialMedia: user.socialMedia || [],       
       }
@@ -100,6 +101,9 @@ router.put('/', async (req, res, next) => {
       profileContainerColor: null,
       userBannerImage: null, 
       isExchangeContactEnabled: true,
+      exchangeContactNameEnglish: null,
+      exchangeContactNameArabic: null,
+      isExchangeContactEnabled: false,
       socialMedia: req.body.socialMedia || []
     });
 
@@ -480,6 +484,57 @@ router.post('/MultiLangActivated/:userId', async (req, res) => {
     });
   }
 });
+
+
+router.post('/ContactCardActivated/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const { isContactCardActivated } = req.body;
+  
+  console.log(`Setting ContactCard to ${isContactCardActivated} for user ${userId}`);
+
+  try {
+    // Find the user by ID
+    const user = await User.findOne({ id: userId });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Initialize field if it doesn't exist
+    if (user.isContactCardActivated === undefined) {
+      console.log('isContactCardActivated field not found - initializing');
+      user.isContactCardActivated = false; // Default value
+    }
+
+    // Convert input to boolean if needed
+    const newValue = typeof isContactCardActivated === 'boolean' 
+      ? isContactCardActivated 
+      : isContactCardActivated === 'true';
+
+    // Update the field
+    user.isContactCardActivated = newValue;
+
+    // Save the updated user
+    await user.save();
+
+    console.log(`Successfully set MultiLangActivated to ${user.isContactCardActivated} for user ${userId}`);
+    
+    return res.status(200).json({ 
+      success: true,
+      message: 'Contact Card status updated successfully',
+      isContactCardActivated: user.isContactCardActivated
+    });
+  } catch (error) {
+    console.error('Error updating Contact Card status:', error);
+    return res.status(500).json({ 
+      success: false,
+      error: 'Internal server error',
+      details: error.message 
+    });
+  }
+});
+
+
 
 //share user information
 router.get('/contact-info/leadcapture/:userId', async (req, res) => {

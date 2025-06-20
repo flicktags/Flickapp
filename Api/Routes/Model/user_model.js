@@ -204,6 +204,13 @@ const userSchema = new mongoose.Schema({
     required: false
   },
 
+  isContactCardActivated:{
+    type: Boolean,
+    required: false,
+    default: false
+  },
+
+
   // profileExecutionCount: {
   //   type: Number,
   //   required: false
