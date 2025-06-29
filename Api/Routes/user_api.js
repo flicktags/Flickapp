@@ -3,8 +3,62 @@ const router=express.Router();
 const mongoose=require('mongoose');
 const User=require('../Routes/Model/user_model')
 const ShareInfo = require('../Routes/Model/share-info');
+const ProfileViewStat = require('../Routes/Model/ProfileViewStat');
+
+
 // Middleware to parse JSON
 router.use(express.json());
+
+// router.post('/track/profile-view/:userId', async (req, res) => {
+//   try {
+//     const { userId } = req.params;
+
+//     // Add 3 hours to UTC time
+//     const localTime = new Date(Date.now() + 3 * 60 * 60 * 1000);
+
+//     const result = await ProfileViewStat.findOneAndUpdate(
+//       { userId },
+//       {
+//         $inc: { count: 1 },
+//         $set: { lastViewedAt: localTime }
+//       },
+//       { upsert: true, new: true }
+//     );
+
+//     res.status(200).json({ message: 'Profile view recorded', result });
+//   } catch (error) {
+//     console.error('Error recording profile view:', error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
+
+router.post('/track/profile-view/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Find the User document by your unique custom id field
+    const user = await User.findOne({ id: userId });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Create new ProfileViewStat document referencing User._id
+    const profileView = new ProfileViewStat({
+      userId: user._id,
+      // viewedAt defaults automatically with offset
+    });
+
+    const savedView = await profileView.save();
+
+    res.status(201).json({ message: 'Profile view recorded', data: savedView });
+  } catch (error) {
+    console.error('Error recording profile view:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
 
 router.get('/:id', async (req, res, next) => {
   const userId = req.params.id;
