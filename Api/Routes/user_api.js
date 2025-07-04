@@ -4,33 +4,12 @@ const mongoose=require('mongoose');
 const User=require('../Routes/Model/user_model')
 const ShareInfo = require('../Routes/Model/share-info');
 const ProfileViewStat = require('../Routes/Model/ProfileViewStat');
+const Feedback = require('../Routes/Model/feedback');
+
 
 
 // Middleware to parse JSON
 router.use(express.json());
-
-// router.post('/track/profile-view/:userId', async (req, res) => {
-//   try {
-//     const { userId } = req.params;
-
-//     // Add 3 hours to UTC time
-//     const localTime = new Date(Date.now() + 3 * 60 * 60 * 1000);
-
-//     const result = await ProfileViewStat.findOneAndUpdate(
-//       { userId },
-//       {
-//         $inc: { count: 1 },
-//         $set: { lastViewedAt: localTime }
-//       },
-//       { upsert: true, new: true }
-//     );
-
-//     res.status(200).json({ message: 'Profile view recorded', result });
-//   } catch (error) {
-//     console.error('Error recording profile view:', error);
-//     res.status(500).json({ error: 'Internal server error' });
-//   }
-// });
 
 router.post('/track/profile-view/:userId', async (req, res) => {
   try {
@@ -58,6 +37,58 @@ router.post('/track/profile-view/:userId', async (req, res) => {
 });
 
 
+router.post('/submit-feedback/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { name, feedback, noofStars } = req.body;
+
+    // console.log('🔹 Incoming Feedback Payload:', {
+    //   userId,
+    //   name,
+    //   feedback,
+    //   noofStars
+    // });
+
+    // Validate required fields
+    if (!feedback || !noofStars) {
+      // console.warn('⚠️ Missing required fields:', { feedback, noofStars });
+      return res.status(400).json({ error: 'Feedback and noofStars are required' });
+    }
+
+    // Find user by custom user ID (not MongoDB _id)
+    const user = await User.findOne({ id: userId });
+    if (!user) {
+      // console.warn(`❌ User not found for id: ${userId}`);
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // console.log('✅ User found:', user._id);
+
+    // Create and save the feedback
+    const newFeedback = new Feedback({
+      userId: user._id,
+      name,
+      feedback,
+      noofStars
+      // submittedAt auto-set
+    });
+
+    // console.log('📝 Feedback document to be saved:', newFeedback);
+
+    const savedFeedback = await newFeedback.save();
+
+    // console.log('✅ Feedback saved:', savedFeedback);
+
+    return res.status(201).json({
+      message: 'Feedback submitted successfully',
+      data: savedFeedback
+    });
+
+  } catch (error) {
+    // console.error('❌ Error submitting feedback:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 router.get('/:id', async (req, res, next) => {
@@ -287,10 +318,6 @@ router.put('/update/:id', async (req, res, next) => {
     if (req.body.hasOwnProperty('isExchangeContactEnabled')) {
       user.isExchangeContactEnabled = req.body.isExchangeContactEnabled;
     }
-    // if (req.body.hasOwnProperty('profileExecutionCount')) {
-    //   user.profileExecutionCount = req.body.profileExecutionCount;
-    // }
-    // Save the updated user
     const updatedUser = await user.save();
 
     return res.json({ data: updatedUser });
