@@ -210,6 +210,12 @@ const userSchema = new mongoose.Schema({
     default: false
   },
 
+  isFeedBackEnabled:{
+    type: Boolean,
+    required: false,
+    default: false
+  },
+
 
   // profileExecutionCount: {
   //   type: Number,

@@ -141,8 +141,10 @@ router.get('/:id', async (req, res, next) => {
         exchangeContactNameEnglish:user.exchangeContactNameEnglish,
         exchangeContactNameArabic:user.exchangeContactNameArabic,
         isContactCardActivated:user.isContactCardActivated,
+        isFeedBackEnabled: user.isFeedBackEnabled,
         deviceToken:user.deviceToken||[],
-        socialMedia: user.socialMedia || [],       
+        socialMedia: user.socialMedia || [],  
+
       }
     });
     
@@ -615,6 +617,53 @@ router.post('/ContactCardActivated/:userId', async (req, res) => {
   }
 });
 
+router.post('/feedbackEnabled/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const { isFeedBackEnabled } = req.body;
+  
+  console.log(`Setting isFeedBackEnabled to ${isFeedBackEnabled} for user ${userId}`);
+
+  try {
+    // Find the user by ID
+    const user = await User.findOne({ id: userId });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Initialize field if it doesn't exist
+    if (user.isFeedBackEnabled === undefined) {
+      console.log('isFeedBackEnabled field not found - initializing');
+      user.isFeedBackEnabled = false; // Default value
+    }
+
+    // Convert input to boolean if needed
+    const newValue = typeof isFeedBackEnabled === 'boolean' 
+      ? isFeedBackEnabled 
+      : isFeedBackEnabled === 'true';
+
+    // Update the field
+    user.isFeedBackEnabled = newValue;
+
+    // Save the updated user
+    await user.save();
+
+    console.log(`Successfully set isFeedBackEnabled to ${user.isFeedBackEnabled} for user ${userId}`);
+    
+    return res.status(200).json({ 
+      success: true,
+      message: 'FeedBack status updated successfully',
+      isFeedBackEnabled: user.isFeedBackEnabled
+    });
+  } catch (error) {
+    console.error('Error updating FeedBack status:', error);
+    return res.status(500).json({ 
+      success: false,
+      error: 'Internal server error',
+      details: error.message 
+    });
+  }
+});
 
 
 //share user information
