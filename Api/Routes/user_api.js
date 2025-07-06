@@ -41,14 +41,6 @@ router.post('/submit-feedback/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
     const { name, feedback, noofStars } = req.body;
-
-    // console.log('🔹 Incoming Feedback Payload:', {
-    //   userId,
-    //   name,
-    //   feedback,
-    //   noofStars
-    // });
-
     // Validate required fields
     if (!feedback || !noofStars) {
       // console.warn('⚠️ Missing required fields:', { feedback, noofStars });
@@ -89,6 +81,25 @@ router.post('/submit-feedback/:userId', async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
+router.get('/feedbacks/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findOne({ id: userId });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const feedbacks = await Feedback.find({ userId: user._id }).sort({ submittedAt: -1 });
+
+    return res.status(200).json({ data: feedbacks });
+  } catch (err) {
+    return res.status(500).json({ error: 'Server error', details: err.message });
+  }
+});
+
 
 
 router.get('/:id', async (req, res, next) => {
@@ -671,8 +682,6 @@ router.get('/contact-info/leadcapture/:userId', async (req, res) => {
   const { userId } = req.params;
 
   try {
-   
-    
     // Check if the userId exists in Users collection based on custom 'id' field
     const existingUser = await User.findOne({ id: userId });
     if (!existingUser) {
