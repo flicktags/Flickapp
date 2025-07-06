@@ -15,10 +15,8 @@ const feedbackSchema = new mongoose.Schema({
     required: true // Required
   },
   noofStars: {
-    type: Number,
+    type: String, // ✅ Allow encrypted string
     required: true,
-    min: 1,
-    max: 5
   },
   submittedAt: {
     type: Date,
