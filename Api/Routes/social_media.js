@@ -38,6 +38,8 @@ const cloudinary = require('cloudinary').v2;
 const streamifier = require('streamifier');
 const mongoose = require('mongoose');
 const User = require('../Routes/Model/user_model'); // Adjust the path to your user model
+const ContentTypesLookup = require('../Routes/Model/contentTypesLookup');
+
 
 // Cloudinary configuration
 cloudinary.config({
@@ -121,6 +123,26 @@ router.put('/:id', upload.single('file'), async (req, res) => {
   } catch (error) {
     console.error('Error creating social media account for user:', error);
     res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+router.post('/saveContentType', async (req, res) => {
+  try {
+    const { name, nameArabic, serial, isActive } = req.body;
+    const contentType = new ContentTypesLookup({ name, nameArabic, serial, isActive });
+    await contentType.save();
+    res.status(201).json(contentType);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.get('/getContentTypesLookup', async (req, res) => {
+  try {
+    const contentTypes = await ContentTypesLookup.find().sort({ serial: 1 });
+    res.json(contentTypes);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
