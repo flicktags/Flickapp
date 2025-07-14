@@ -36,6 +36,33 @@ router.post('/track/profile-view/:userId', async (req, res) => {
   }
 });
 
+router.get('/fetch-profile-views/:userId', async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    // First find the user by their custom id field
+    const existingUser = await User.findOne({ id: userId });
+    if (!existingUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Find all profile views using the User._id (ObjectId)
+    const profileViews = await ProfileViewStat.find({ 
+      userId: existingUser._id 
+    }).sort({ viewedAt: -1 }); // newest first
+
+    return res.status(200).json({ 
+      data: profileViews,
+      count: profileViews.length
+    });
+  } catch (error) {
+    console.error('Error fetching profile views:', error);
+    return res.status(500).json({ 
+      message: 'Error fetching profile views', 
+      error 
+    });
+  }
+});
 
 router.post('/submit-feedback/:userId', async (req, res) => {
   try {
