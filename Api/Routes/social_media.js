@@ -436,6 +436,7 @@ router.put('/update-social-media-logo/:id', upload.single('file'), async (req, r
     if (req.body.hasOwnProperty('socialMediaName')) {
       socialMedia.socialMediaName = req.body.socialMediaName;
     }
+
     if (req.body.hasOwnProperty('socialMediaNameArabic')) {
       socialMedia.socialMediaNameArabic = req.body.socialMediaNameArabic;
     }
@@ -450,6 +451,10 @@ router.put('/update-social-media-logo/:id', upload.single('file'), async (req, r
 
     if (req.body.hasOwnProperty('category')) {
       socialMedia.category = req.body.category;
+    }
+
+    if (req.body.hasOwnProperty('socialMediaCategory')) {
+      socialMedia.socialMediaCategory = req.body.socialMediaCategory;
     }
 
     if (req.body.hasOwnProperty('isActive')) {
