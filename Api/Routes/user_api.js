@@ -180,6 +180,8 @@ router.get('/:id', async (req, res, next) => {
         exchangeContactNameArabic:user.exchangeContactNameArabic,
         isContactCardActivated:user.isContactCardActivated,
         isFeedBackEnabled: user.isFeedBackEnabled,
+        profileThemeCode: user.profileThemeCode || null,
+
         deviceToken:user.deviceToken||[],
         socialMedia: user.socialMedia || [],  
 
@@ -860,6 +862,28 @@ router.post('/exchangeContactNaming/:userId', async (req, res) => {
     await user.save();
 
     res.status(200).json({ message: 'Exchange Contact name saved successfully' });
+  } catch (error) {
+    console.error(error); // Log the error for debugging purposes
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.post('/saveProfileTheme/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const { profileThemeCode} = req.body;  // Extract colorCode from the request body
+
+    // Find the user document based on the provided user ID
+    const user = await User.findOne({ id: userId });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.profileThemeCode = profileThemeCode || null;
+    await user.save();
+
+    res.status(200).json({ message: 'Profile Theme updated successfully' });
   } catch (error) {
     console.error(error); // Log the error for debugging purposes
     res.status(500).json({ message: 'Server error' });

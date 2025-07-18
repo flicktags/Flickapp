@@ -219,13 +219,11 @@ const userSchema = new mongoose.Schema({
     required: false,
     default: false
   },
-
-
-  // profileExecutionCount: {
-  //   type: Number,
-  //   required: false
-  // },
-
+   profileThemeCode: {
+    type: String,
+    required: false
+  },
+  
   socialMedia: [socialMediaSchema]
 });
 
