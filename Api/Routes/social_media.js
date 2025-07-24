@@ -50,7 +50,16 @@ cloudinary.config({
 });
 
 // Multer setup for handling file uploads
-const upload = multer();
+// const upload = multer();
+
+//used the below code to increase the upload limit to 10MB
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // Allow up to 10MB
+  },
+});
 
 // Utility function to run middleware
 function runMiddleware(req, res, fn) {
