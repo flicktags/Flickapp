@@ -112,7 +112,7 @@ router.put('/:id', async (req, res) => {
       socialMediaCategory: req.body.socialMediaCategory,
       category: req.body.category,
       isActive: true,
-      userPdf: req.body.userPdf || null  // optional
+      userPdf: req.body.pdfUrl || null  // optional
     };
 
     // Add to the array
