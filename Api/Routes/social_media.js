@@ -50,16 +50,16 @@ cloudinary.config({
 });
 
 // Multer setup for handling file uploads
-// const upload = multer();
+const upload = multer();
 
 //used the below code to increase the upload limit to 10MB
-const storage = multer.memoryStorage();
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 10 * 1024 * 1024, // Allow up to 10MB
-  },
-});
+// const storage = multer.memoryStorage();
+// const upload = multer({
+//   storage: storage,
+//   limits: {
+//     fileSize: 10 * 1024 * 1024, // Allow up to 10MB
+//   },
+// });
 
 // Utility function to run middleware
 function runMiddleware(req, res, fn) {
@@ -89,8 +89,8 @@ async function uploadPdfToCloudinary(fileBuffer) {
   });
 }
 
-// PUT endpoint to create a new social media account and handle optional PDF upload
-router.put('/:id', upload.single('file'), async (req, res) => {
+// this api accepts userPdf url being received from frontEnd. 
+router.put('/:id', async (req, res) => {
   const userId = req.params.id;
 
   try {
@@ -101,14 +101,7 @@ router.put('/:id', upload.single('file'), async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    let pdfUrl = null;
-    
-    // If there's a file (PDF) in the request, handle the PDF upload
-    if (req.file) {
-      pdfUrl = await uploadPdfToCloudinary(req.file.buffer);
-    }
-
-    // Create a new social media account
+    // Build the new social media entry from JSON body
     const newSocialMedia = {
       socialMediaName: req.body.socialMediaName,
       socialMediaNameArabic: req.body.socialMediaNameArabic,
@@ -119,21 +112,73 @@ router.put('/:id', upload.single('file'), async (req, res) => {
       socialMediaCategory: req.body.socialMediaCategory,
       category: req.body.category,
       isActive: true,
-      userPdf: pdfUrl,
+      userPdf: req.body.userPdf || null  // optional
     };
 
-    // Add the new social media account to the user's array
+    // Add to the array
     user.socialMedia.push(newSocialMedia);
 
-    // Save the updated user
+    // Save user with the new data
     const updatedUser = await user.save();
 
-    res.status(200).json({ message: 'Social media account created', data: updatedUser });
+    return res.status(200).json({
+      message: 'Social media account added successfully',
+      data: updatedUser
+    });
+
   } catch (error) {
-    console.error('Error creating social media account for user:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+// PUT endpoint to create a new social media account and handle optional PDF upload
+// this api saves the pdf to cloudinary but the limit is 4.5MB max.
+// router.put('/:id', upload.single('file'), async (req, res) => {
+//   const userId = req.params.id;
+
+//   try {
+//     // Find the user by ID
+//     const user = await User.findOne({ id: userId });
+
+//     if (!user) {
+//       return res.status(404).json({ error: 'User not found' });
+//     }
+
+//     let pdfUrl = null;
+    
+//     // If there's a file (PDF) in the request, handle the PDF upload
+//     if (req.file) {
+//       pdfUrl = await uploadPdfToCloudinary(req.file.buffer);
+//     }
+
+//     // Create a new social media account
+//     const newSocialMedia = {
+//       socialMediaName: req.body.socialMediaName,
+//       socialMediaNameArabic: req.body.socialMediaNameArabic,
+//       socialMediaType: req.body.socialMediaType,
+//       socialMediaLink: req.body.socialMediaLink,
+//       socialMediaCustomLogo: req.body.socialMediaCustomLogo,
+//       socialMediaCustomLogoPublicId: req.body.socialMediaCustomLogoPublicId,
+//       socialMediaCategory: req.body.socialMediaCategory,
+//       category: req.body.category,
+//       isActive: true,
+//       userPdf: pdfUrl,
+//     };
+
+//     // Add the new social media account to the user's array
+//     user.socialMedia.push(newSocialMedia);
+
+//     // Save the updated user
+//     const updatedUser = await user.save();
+
+//     res.status(200).json({ message: 'Social media account created', data: updatedUser });
+//   } catch (error) {
+//     console.error('Error creating social media account for user:', error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
 
 router.post('/saveContentType', async (req, res) => {
   try {
