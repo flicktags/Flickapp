@@ -49,6 +49,9 @@ const socialMediaSchema = new mongoose.Schema({
   userPdf: {
     type:String,
   },
+  userPdfPublicId: {
+    type:String,
+  },
 });
 
 const userSchema = new mongoose.Schema({

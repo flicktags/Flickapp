@@ -112,7 +112,8 @@ router.put('/:id', async (req, res) => {
       socialMediaCategory: req.body.socialMediaCategory,
       category: req.body.category,
       isActive: true,
-      userPdf: req.body.pdfUrl || null  // optional
+      userPdf: req.body.userPdf || null,
+userPdfPublicId: req.body.userPdfPublicId || null,
     };
 
     // Add to the array
@@ -200,6 +201,36 @@ router.get('/getContentTypesLookup', async (req, res) => {
   }
 });
 
+// router.delete('/delete/:userId/:socialMediaId', async (req, res) => {
+//   const { userId, socialMediaId } = req.params;
+
+//   try {
+//     const user = await User.findOne({ id: userId });
+//     if (!user) return res.status(404).json({ error: 'User not found' });
+
+//     const socialMediaEntry = user.socialMedia.id(socialMediaId);
+//     if (!socialMediaEntry) return res.status(404).json({ error: 'Social media not found' });
+
+//     // Delete from Cloudinary
+//     if (socialMediaEntry.socialMediaCustomLogoPublicId) {
+//       await cloudinary.uploader.destroy(
+//         socialMediaEntry.socialMediaCustomLogoPublicId,
+//         { invalidate: true }
+//       );
+//     }
+
+//     // Delete from database
+//     user.socialMedia.pull(socialMediaId);
+//     await user.save();
+
+//     return res.json({ success: true });
+//   } catch (error) {
+//     console.error('Deletion error:', error);
+//     return res.status(500).json({ error: 'Deletion failed' });
+//   }
+// });
+const path = require('path');
+
 router.delete('/delete/:userId/:socialMediaId', async (req, res) => {
   const { userId, socialMediaId } = req.params;
 
@@ -210,12 +241,29 @@ router.delete('/delete/:userId/:socialMediaId', async (req, res) => {
     const socialMediaEntry = user.socialMedia.id(socialMediaId);
     if (!socialMediaEntry) return res.status(404).json({ error: 'Social media not found' });
 
-    // Delete from Cloudinary
+    // Delete custom logo from Cloudinary
     if (socialMediaEntry.socialMediaCustomLogoPublicId) {
       await cloudinary.uploader.destroy(
         socialMediaEntry.socialMediaCustomLogoPublicId,
         { invalidate: true }
       );
+    }
+
+    // 🆕 Delete PDF from Cloudinary using URL
+    if (socialMediaEntry.userPdf) {
+      const pdfUrl = socialMediaEntry.userPdf;
+
+      // Example: https://res.cloudinary.com/diwspe6yi/raw/upload/v1753472740/flick_large_userPdf/wi3dhwstcs2cxfr2fmty.pdf
+      const urlParts = pdfUrl.split('/upload/');
+      if (urlParts.length === 2) {
+        const pdfPathWithExtension = urlParts[1]; // e.g. flick_large_userPdf/wi3dhwstcs2cxfr2fmty.pdf
+        const pdfPath = pdfPathWithExtension.replace(/\.[^/.]+$/, ""); // remove .pdf extension
+
+        await cloudinary.uploader.destroy(pdfPath, {
+          resource_type: "raw", // Required for non-image files
+          invalidate: true
+        });
+      }
     }
 
     // Delete from database
