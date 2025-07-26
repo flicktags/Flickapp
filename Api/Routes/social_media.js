@@ -241,7 +241,7 @@ router.delete('/delete/:userId/:socialMediaId', async (req, res) => {
     const socialMediaEntry = user.socialMedia.id(socialMediaId);
     if (!socialMediaEntry) return res.status(404).json({ error: 'Social media not found' });
 
-    // Delete custom logo from Cloudinary
+    // Delete custom logo from Cloudinary (image)
     if (socialMediaEntry.socialMediaCustomLogoPublicId) {
       await cloudinary.uploader.destroy(
         socialMediaEntry.socialMediaCustomLogoPublicId,
@@ -249,24 +249,39 @@ router.delete('/delete/:userId/:socialMediaId', async (req, res) => {
       );
     }
 
-    // 🆕 Delete PDF from Cloudinary using URL
-    if (socialMediaEntry.userPdf) {
-      const pdfUrl = socialMediaEntry.userPdf;
-
-      // Example: https://res.cloudinary.com/diwspe6yi/raw/upload/v1753472740/flick_large_userPdf/wi3dhwstcs2cxfr2fmty.pdf
-      const urlParts = pdfUrl.split('/upload/');
-      if (urlParts.length === 2) {
-        const pdfPathWithExtension = urlParts[1]; // e.g. flick_large_userPdf/wi3dhwstcs2cxfr2fmty.pdf
-        const pdfPath = pdfPathWithExtension.replace(/\.[^/.]+$/, ""); // remove .pdf extension
-
-        await cloudinary.uploader.destroy(pdfPath, {
-          resource_type: "raw", // Required for non-image files
-          invalidate: true
-        });
+    // Delete PDF from Cloudinary (raw file)
+    if (socialMediaEntry.userPdfPublicId) {
+      console.log('Deleting PDF via userPdfPublicId:', socialMediaEntry.userPdfPublicId);
+      
+      // Try with .pdf extension first
+      try {
+        await cloudinary.uploader.destroy(
+          `${socialMediaEntry.userPdfPublicId}.pdf`, // Add .pdf extension
+          {
+            resource_type: 'raw',
+            invalidate: true,
+            type: 'upload' // Explicitly specify type
+          }
+        );
+      } catch (firstError) {
+        console.log('First attempt failed, trying without extension');
+        try {
+          // Fallback to try without extension
+          await cloudinary.uploader.destroy(
+            socialMediaEntry.userPdfPublicId,
+            {
+              resource_type: 'raw',
+              invalidate: true,
+              type: 'upload'
+            }
+          );
+        } catch (secondError) {
+          console.error('Both PDF deletion attempts failed:', secondError);
+        }
       }
     }
 
-    // Delete from database
+    // Remove entry from database
     user.socialMedia.pull(socialMediaId);
     await user.save();
 
@@ -276,6 +291,8 @@ router.delete('/delete/:userId/:socialMediaId', async (req, res) => {
     return res.status(500).json({ error: 'Deletion failed' });
   }
 });
+
+
 
 
 // router.delete('/delete/:id/:socialMediaId', async (req, res) => {
