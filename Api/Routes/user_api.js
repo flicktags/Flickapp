@@ -5,6 +5,7 @@ const User=require('../Routes/Model/user_model')
 const ShareInfo = require('../Routes/Model/share-info');
 const ProfileViewStat = require('../Routes/Model/ProfileViewStat');
 const Feedback = require('../Routes/Model/feedback');
+const SocialMediaViewStat = require('../Routes/Model/socialMediaViewStat');
 
 
 
@@ -63,6 +64,80 @@ router.get('/fetch-profile-views/:userId', async (req, res) => {
     });
   }
 });
+
+router.post('/track/social-view/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const { socialMediaType } = req.body;
+
+  // console.log('[REQUEST]', {
+  //   userId,
+  //   socialMediaType,
+  // });
+
+  if (!socialMediaType) {
+    // console.log('[ERROR] socialMediaType missing in request body');
+    return res.status(400).json({ error: 'Missing socialMediaType' });
+  }
+
+  try {
+    const user = await User.findOne({ id: userId });
+    if (!user) {
+      // console.log(`[ERROR] User not found for id: ${userId}`);
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const newView = new SocialMediaViewStat({
+      userId: user._id,
+      socialMediaType,
+    });
+
+    const saved = await newView.save();
+    // console.log('[SUCCESS] Social media view saved:', saved);
+
+    res.status(201).json({ message: 'Social media view recorded', data: saved });
+  } catch (error) {
+    // console.error('[EXCEPTION] Failed to track social media view:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.get('/fetch-social-views/:userId', async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    // Find the user by your custom ID field (not _id)
+    const user = await User.findOne({ id: userId });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Aggregate the stats grouped by socialMediaType
+    const stats = await SocialMediaViewStat.aggregate([
+      { $match: { userId: user._id } },
+      {
+        $group: {
+          _id: '$socialMediaType',
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          socialMediaType: '$_id',
+          count: 1
+        }
+      }
+    ]);
+
+    res.status(200).json({ data: stats });
+  } catch (error) {
+    console.error('Error fetching social media view stats:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
 
 router.post('/submit-feedback/:userId', async (req, res) => {
   try {
@@ -181,7 +256,6 @@ router.get('/:id', async (req, res, next) => {
         isContactCardActivated:user.isContactCardActivated,
         isFeedBackEnabled: user.isFeedBackEnabled,
         profileThemeCode: user.profileThemeCode || null,
-
         deviceToken:user.deviceToken||[],
         socialMedia: user.socialMedia || [],  
 
