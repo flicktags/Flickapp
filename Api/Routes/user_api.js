@@ -136,6 +136,66 @@ router.get('/fetch-social-views/:userId', async (req, res) => {
   }
 });
 
+//fetch social Media Stats by Date
+router.get('/fetch-social-views-by-date/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const { from, to } = req.query;
+
+  if (!from || !to) {
+    return res.status(400).json({ error: "Missing 'from' or 'to' date in query params." });
+  }
+
+  try {
+    // Validate and parse dates
+    const fromDate = new Date(from);
+    const toDate = new Date(to);
+toDate.setHours(23, 59, 59, 999); // ✅ Include full day till 23:59:59.999
+
+
+    if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
+      return res.status(400).json({ error: "Invalid date format." });
+    }
+
+    // Find the user by custom user id
+    const user = await User.findOne({ id: userId });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Aggregate views in date range grouped by socialMediaType
+    const stats = await SocialMediaViewStat.aggregate([
+      {
+        $match: {
+          userId: user._id,
+          viewedAt: {
+            $gte: fromDate,
+            $lte: toDate,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$socialMediaType",
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          socialMediaType: "$_id",
+          count: 1,
+        },
+      },
+    ]);
+
+    res.status(200).json({ data: stats });
+  } catch (error) {
+    console.error("Error fetching social media views by date:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 
 
 
