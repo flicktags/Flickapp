@@ -276,7 +276,20 @@ router.get('/:id', async (req, res, next) => {
     }
 
     console.log("Fetched user data:", user);
+ // Handle totalAddedContent fallback logic
+    let totalAddedContent = user.totalAddedContent || 0;
+    const socialMediaCount = user.socialMedia?.length || 0;
 
+    if (
+      (totalAddedContent === 0 || totalAddedContent < socialMediaCount) &&
+      socialMediaCount > 0
+    ) {
+      totalAddedContent = socialMediaCount;
+      user.totalAddedContent = totalAddedContent;
+      await user.save();
+    }
+
+    const currentAvailableContent = user.socialMedia?.filter(item => item.isActive).length || 0;
     // Send user details, including social media information
     return res.status(200).json({
       data: {
@@ -317,8 +330,9 @@ router.get('/:id', async (req, res, next) => {
         isFeedBackEnabled: user.isFeedBackEnabled,
         profileThemeCode: user.profileThemeCode || null,
         deviceToken:user.deviceToken||[],
+        totalAddedContent: totalAddedContent,
         socialMedia: user.socialMedia || [],  
-
+        currentAvailableContent: currentAvailableContent,
       }
     });
     

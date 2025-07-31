@@ -226,6 +226,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+  totalAddedContent: {
+    type: Number,
+    required: false,
+    default: 0
+  },
   
   socialMedia: [socialMediaSchema]
 });

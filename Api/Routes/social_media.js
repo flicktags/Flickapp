@@ -113,11 +113,12 @@ router.put('/:id', async (req, res) => {
       category: req.body.category,
       isActive: true,
       userPdf: req.body.userPdf || null,
-userPdfPublicId: req.body.userPdfPublicId || null,
+      userPdfPublicId: req.body.userPdfPublicId || null,
     };
 
     // Add to the array
     user.socialMedia.push(newSocialMedia);
+    user.totalAddedContent = (user.totalAddedContent || 0) + 1;
 
     // Save user with the new data
     const updatedUser = await user.save();
